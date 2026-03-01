@@ -1,0 +1,44 @@
+import sqlite3
+
+class Database:
+    def __init__(self, db_file):
+        # Підключаємося до файлу бази даних
+        self.connection = sqlite3.connect(db_file, check_same_thread=False)
+        self.cursor = self.connection.cursor()
+        self.create_table()
+
+    def create_table(self):
+        # Твій вивчений SQL у дії! Створюємо таблицю витрат
+        with self.connection:
+            return self.cursor.execute("""
+                CREATE TABLE IF NOT EXISTS expenses (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    amount REAL,
+                    category TEXT,
+                    date TEXT
+                )
+            """)
+
+    def add_expense(self, user_id, amount, category, date):
+        # Команда INSERT для додавання даних
+        with self.connection:
+            return self.cursor.execute(
+                "INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)",
+                (user_id, amount, category, date)
+            )
+
+    def delete_expense(self, user_id):
+        with self.connection:
+            return self.cursor.execute(
+                "DELETE FROM expenses WHERE id = (SELECT MAX(id) FROM expenses WHERE user_id = ?)",
+                (user_id,)
+            )
+
+    def get_user_expenses(self, user_id):
+        # Команда SELECT для звіту
+        with self.connection:
+            return self.cursor.execute(
+                "SELECT amount, category, date FROM expenses WHERE user_id = ?",
+                (user_id,)
+            ).fetchall()
