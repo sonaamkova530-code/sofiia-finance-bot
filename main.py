@@ -16,20 +16,37 @@ def start(message):
     btn2 = types.KeyboardButton("Видалити останню.")
     btn3 = types.KeyboardButton("Мої витрати.")
     markup.add(btn1, btn2, btn3)
-    bot.send_message(message.chat.id, "Привітик, Обери дію:", reply_markup = markup)
+    bot.send_message(message.chat.id, "Привітик, обери дію:", reply_markup = markup)
 
 @bot.message_handler(func=lambda message: message.text == "Додати витрату.")
 def ask(message):
-    msg = bot.send_message(message.chat.id, "Введи суму (наприклад 150.6):")
-    bot.register_next_step_handler(msg, save_money)
+    msg = bot.send_message(message.chat.id, "Введи суму (наприклад 150.5)")
+    bot.register_next_step_handler(msg, get_amount)
 
-def save_money(message):
+
+def get_amount(message):
     try:
         amount = float(message.text)
-        db.add_expense(message.chat.id, amount, "Загальне", datetime.now().strftime("%Y-%m-%d"))
-        bot.send_message(message.chat.id, f"Збережено: {amount} грн")
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        markup.add("Кава","Обід","Транспорт","Шопінг")
+        msg = bot.send_message(message.chat.id, "Обери категорію:", reply_markup = markup)
+        bot.register_next_step_handler(msg, lambda m: save_all_data(m, amount))
     except ValueError:
-        bot.send_message(message.chat.id, "Помилка! Напиши число цифрами!")
+        bot.send_message(message.chat.id, "Помилка! Треба ввести число цифрами!")
+
+
+def save_all_data(message, amount):
+    category = message.text
+    user_id = message.chat.id
+
+    current_date = datetime.now().strftime("%Y-%m-%d")
+
+    db.add_expense(message.chat.id, amount, category, current_date)
+
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add("Додати витрату.", "Видалити останню.", "Мої витрати.")
+    bot.send_message(user_id, f"Збережено: {amount} грн, на '{category}'", reply_markup = markup)
+
 
 @bot.message_handler(func=lambda message: message.text == "Видалити останню.")
 def delete(message):
