@@ -56,10 +56,13 @@ def delete(message):
 @bot.message_handler(func=lambda message: message.text == "Мої витрати.")
 def show(message):
     data = db.get_user_expenses(message.chat.id)
+    total = db.get_total_spending(message.chat.id)
     if not data:
         bot.send_message(message.chat.id, "У базі поки порожньо.")
     else:
-        report = "Твої витрати:\n" + "\n".join([f"- {r[0]} грн | ({r[1]}) | ({r[2]})" for r in data])
-        bot.send_message(message.chat.id, report)
+        report = "**Твої витрати:**\n"
+        report += "\n".join([f"- {r[0]} грн | ({r[1]}) | ({r[2]})" for r in data])
+        report += f"\n\n**Всього витрачено: {total} грн**"
+        bot.send_message(message.chat.id, report, parse_mode="Markdown")
 
 bot.infinity_polling()

@@ -42,3 +42,8 @@ class Database:
                 "SELECT amount, category, date FROM expenses WHERE user_id = ?",
                 (user_id,)
             ).fetchall()
+
+    def get_total_spending(self, user_id):
+        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ?", (user_id,))
+        result = self.cursor.fetchone()
+        return result[0] if result[0] is not None else 0
