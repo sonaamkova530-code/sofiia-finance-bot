@@ -47,3 +47,14 @@ class Database:
         self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ?", (user_id,))
         result = self.cursor.fetchone()
         return result[0] if result[0] is not None else 0
+
+    def get_today_spending(self, user_id, date):
+        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ? AND date = ?", (user_id, date))
+        result = self.cursor.fetchone()
+        return result[0] if result is not None else 0
+
+
+    def get_expenses_by_period(self, user_id, days):
+        query = f"SELECT amount, category, date FROM expenses WHERE user_id = ? AND date >= DATE('now', '-{days} days')"
+        self.cursor.execute(query,(user_id,))
+        return self.cursor.fetchall()
