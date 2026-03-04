@@ -61,6 +61,11 @@ class Database:
         self.cursor.execute(query,(user_id,))
         return self.cursor.fetchall()
 
+    def get_today_expenses(self, user_id):
+        query = f"SELECT amount, category, date FROM expenses WHERE user_id = ? AND date = date('now')"
+        self.cursor.execute(query,(user_id,))
+        return self.cursor.fetchall()
+
     def get_expenses_by_category(self, user_id):
         self.cursor.execute("""
         SELECT category, SUM(amount)
