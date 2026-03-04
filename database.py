@@ -29,11 +29,13 @@ class Database:
             )
 
     def delete_expense(self, user_id):
-        with self.connection:
-            return self.cursor.execute(
-                "DELETE FROM expenses WHERE id = (SELECT MAX(id) FROM expenses WHERE user_id = ?)",
-                (user_id,)
-            )
+        self.cursor.execute("SELECT id FROM expenses WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
+        last_id = self.cursor.fetchone()
+        if last_id:
+            self.cursor.execute("DELETE FROM expenses WHERE id = ?", (last_id[0],))
+            self.connection.commit()
+            return True
+        return False
 
     def get_user_expenses(self, user_id):
         # Команда SELECT для звіту

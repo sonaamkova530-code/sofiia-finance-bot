@@ -53,8 +53,12 @@ def save_all_data(message, amount):
 
 @bot.message_handler(func=lambda message: message.text == "Видалити останню")
 def delete(message):
-    db.delete_expense(message.chat.id)
-    bot.send_message(message.chat.id, "Видалено останній запис!")
+    success = db.delete_expense(message.chat.id)
+    if success:
+        bot.send_message(message.chat.id, "Видалено останній запис!")
+    else:
+        bot.send_message(message.chat.id, "У базі поки порожньо, видаляти нічого.")
+
 
 @bot.message_handler(func=lambda message: message.text == "Мої витрати")
 def show_menu(message):
