@@ -4,6 +4,12 @@ import telebot
 from telebot import types
 from database import Database
 from datetime import datetime
+import logging
+logging.basicConfig(
+level=logging.INFO,
+filename='bot.log',
+filemode='a',
+format = '%(asctime)s - %(levelname)s - %(message)s',)
 load_dotenv()
 db = Database('my_budget.db')
 bot = telebot.TeleBot(os.getenv("TOKEN"))
@@ -27,6 +33,9 @@ def ask(message):
 def get_amount(message):
     try:
         amount = float(message.text)
+        if amount < 0:
+            bot.send_message(message.chat.id, "Сума має бути більшою за нуль!")
+            return
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         markup.add("Кава","Обід","Транспорт","Шопінг")
         msg = bot.send_message(message.chat.id, "Обери категорію:", reply_markup = markup)
@@ -129,5 +138,6 @@ def show_stats(message):
         report = "*Витрати по категоріям:*\n"
         report += "\n".join([f"- {r[0]} | *{r[1]} грн*" for r in stats])
         bot.send_message(message.chat.id, report, parse_mode="Markdown")
+        start(message)
 
 bot.infinity_polling()
