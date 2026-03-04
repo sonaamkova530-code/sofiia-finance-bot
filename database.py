@@ -60,3 +60,12 @@ class Database:
         query = f"SELECT amount, category, date FROM expenses WHERE user_id = ? AND date >= DATE('now', '-{days} days')"
         self.cursor.execute(query,(user_id,))
         return self.cursor.fetchall()
+
+    def get_expenses_by_category(self, user_id):
+        self.cursor.execute("""
+        SELECT category, SUM(amount)
+        FROM expenses
+        WHERE user_id = ?
+        GROUP BY category
+        ORDER BY SUM(amount) DESC""", (user_id,))
+        return self.cursor.fetchall()

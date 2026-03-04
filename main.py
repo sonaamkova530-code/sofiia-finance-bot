@@ -67,7 +67,8 @@ def show_menu(message):
     btn2 = types.KeyboardButton("Тиждень")
     btn3 = types.KeyboardButton("Місяць")
     btn4 = types.KeyboardButton("Назад")
-    markup.add(btn1, btn2, btn3, btn4)
+    btn5 = types.KeyboardButton("Статистика")
+    markup.add(btn1, btn2, btn3, btn4, btn5)
     bot.send_message(message.chat.id, "За який період показати звіт?", reply_markup = markup)
 
 
@@ -118,5 +119,15 @@ def show_monthly(message):
 def back(message):
     start(message)
 
+
+@bot.message_handler(func=lambda message: message.text == "Статистика")
+def show_stats(message):
+    stats = db.get_expenses_by_category(message.chat.id)
+    if not stats:
+        bot.send_message(message.chat.id, "Даних для статистики поки немає.")
+    else:
+        report = "*Витрати по категоріям:*\n"
+        report += "\n".join([f"- {r[0]} | *{r[1]} грн*" for r in stats])
+        bot.send_message(message.chat.id, report, parse_mode="Markdown")
 
 bot.infinity_polling()
