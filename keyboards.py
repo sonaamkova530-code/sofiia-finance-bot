@@ -2,7 +2,7 @@ from telebot import types
 
 def get_main_menu():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add("Додати витрату", "Видалити останню", "Мої витрати", "Статистика")
+    markup.add("Додати витрату", "Видалити останню", "Мої витрати", "Статистика", "Експорт в Excel")
     return markup
 
 def get_categories_menu():

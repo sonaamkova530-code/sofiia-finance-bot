@@ -74,3 +74,7 @@ class Database:
         GROUP BY category
         ORDER BY SUM(amount) DESC""", (user_id,))
         return self.cursor.fetchall()
+
+    def get_all_expenses_for_export(self, user_id):
+        self.cursor.execute("SELECT amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC", (user_id,))
+        return self.cursor.fetchall()

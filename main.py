@@ -112,4 +112,20 @@ def show_stats(message):
         bot.send_message(message.chat.id, report, parse_mode="Markdown")
         start(message)
 
+
+@bot.message_handler(func=lambda message: message.text == "Експорт в Excel")
+def export_to_excel(message):
+    data = db.get_all_expenses_for_export(message.chat.id)
+    file_path = reports.create_excel_report(data, message.chat.id)
+    if file_path:
+        with open(file_path, 'rb') as file:
+            bot.send_document(message.chat.id, file, caption="Твій повний звіт у Excel")
+
+        os.remove(file_path)
+    else:
+        bot.send_message(message.chat.id, "У базі поки немає даних для експорту.")
+
+
+
+
 bot.infinity_polling()
