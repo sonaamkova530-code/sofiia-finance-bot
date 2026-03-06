@@ -104,6 +104,14 @@ def back(message):
 @bot.message_handler(func=lambda message: message.text == "Статистика")
 def show_stats(message):
     stats = db.get_expenses_by_category(message.chat.id)
+    chart_path = reports.create_stats_chart(stats, message.chat.id)
+
+    if chart_path:
+        with open(chart_path, 'rb') as file:
+            bot.send_photo(message.chat.id, file, caption="Твоя статистика у графіках:")
+        import os
+        os.remove(chart_path)
+
     if not stats:
         bot.send_message(message.chat.id, "Даних для статистики поки немає.")
     else:
