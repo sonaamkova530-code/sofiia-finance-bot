@@ -22025,3 +22025,41 @@ requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.telegram.org'
 
 2026-03-11 21:43:22,993 - ERROR - Infinity polling: polling exited
 2026-03-11 21:43:22,994 - ERROR - Break infinity polling
+2026-03-11 22:32:53,867 - ERROR - Infinity polling: polling exited
+2026-03-11 22:32:53,869 - ERROR - Break infinity polling
+2026-03-11 22:33:34,134 - ERROR - Infinity polling exception: TeleBot.send_message() got an unexpected keyword argument 'caption'
+2026-03-11 22:33:34,136 - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 logger_level=logger_level, allowed_updates=allowed_updates, restart_on_change=False,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            logger_level=logger_level, allowed_updates=allowed_updates)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 97, in run
+    task(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\main.py", line 178, in total_balance
+    bot.send_message(message.chat.id, photo, caption=report, parse_mode="Markdown")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: TeleBot.send_message() got an unexpected keyword argument 'caption'
+
+2026-03-11 22:36:10,508 - ERROR - Infinity polling: polling exited
+2026-03-11 22:36:10,509 - ERROR - Break infinity polling
+2026-03-11 22:38:39,770 - ERROR - Infinity polling: polling exited
+2026-03-11 22:38:39,771 - ERROR - Break infinity polling

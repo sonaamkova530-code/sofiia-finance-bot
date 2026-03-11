@@ -1,10 +1,8 @@
 from unicodedata import category
-
 import keyboards
 import os
 from dotenv import load_dotenv
 import telebot
-
 import reports
 from database import Database
 from datetime import datetime
@@ -161,8 +159,11 @@ def save_income(message, amount):
 @bot.message_handler(func=lambda message: message.text == "Загальний баланс")
 
 def total_balance(message):
+    user_id = message.chat.id
     total_income = db.get_total_income(message.chat.id)
     total_expenses = db.get_total_spending(message.chat.id)
+    chart_path = reports.create_balance_chart(total_income, total_expenses, user_id)
+
     balance = total_income - total_expenses
     report = (f"*Твій фінансовий звіт:*\n"
               f"Доходи: {total_income} грн\n"
@@ -170,5 +171,10 @@ def total_balance(message):
               f"----------------------\n"
               f"*Залишок: {balance} грн*")
     bot.send_message(message.chat.id, report, parse_mode="Markdown")
+
+    with open(chart_path, 'rb') as photo:
+        bot.send_photo(message.chat.id, photo, caption=report, parse_mode="Markdown")
+    import os
+    os.remove(chart_path)
 
 bot.infinity_polling()

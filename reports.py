@@ -1,5 +1,23 @@
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+def create_balance_chart(income, spending, user_id):
+    labels = ["Доходи", "Витрати"]
+    values = [income, spending]
+    colors = ['#4CAF50', '#FF5252']
+    plt.figure(figsize = (8, 5))
+    plt.bar(labels, values, color= colors)
+    plt.title("Порівняння доходів та витрат", fontsize = 14)
+    plt.ylabel("Сума (грн)")
+
+    for i, v in enumerate(values):
+        plt.text(i, v + (max(values) * 0.02), str(v), ha='center', fontweight = 'bold')
+    file_name = f"balance_chart_{user_id}.png"
+    plt.savefig(file_name)
+    plt.close()
+    return file_name
 
 
 
