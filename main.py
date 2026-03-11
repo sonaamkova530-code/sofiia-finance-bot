@@ -1,3 +1,5 @@
+from unicodedata import category
+
 import keyboards
 import os
 from dotenv import load_dotenv
@@ -134,6 +136,39 @@ def export_to_excel(message):
         bot.send_message(message.chat.id, "У базі поки немає даних для експорту.")
 
 
+@bot.message_handler(func=lambda message: message.text == "Додати дохід")
 
+def ask_income(message):
+    msg = bot.send_message(message.chat.id, "Ввести суму доходу:")
+    bot.register_next_step_handler(msg, get_income_amount)
+
+def get_income_amount(message):
+    try:
+        amount = float(message.text)
+        markup = keyboards.get_incomes_categories_menu()
+        msg = bot.send_message(message.chat.id, "Обери джерело:", reply_markup = markup)
+        bot.register_next_step_handler(msg, lambda m: save_income(m, amount))
+    except ValueError:
+        bot.send_message(message.chat.id, "Будь ласка, введи число!")
+
+def save_income(message, amount):
+    category = message.text
+    current_date = datetime.now().strftime("%Y/%m/%d")
+    db.add_income(message.chat.id, amount, category, current_date)
+    bot.send_message(message.chat.id, f"Записано +{amount} грн ({category})", reply_markup=keyboards.get_main_menu())
+
+
+@bot.message_handler(func=lambda message: message.text == "Загальний баланс")
+
+def total_balance(message):
+    total_income = db.get_total_income(message.chat.id)
+    total_expenses = db.get_total_spending(message.chat.id)
+    balance = total_income - total_expenses
+    report = (f"*Твій фінансовий звіт:*\n"
+              f"Доходи: {total_income} грн\n"
+              f"Витрати: {total_expenses} грн\n"
+              f"----------------------\n"
+              f"*Залишок: {balance} грн*")
+    bot.send_message(message.chat.id, report, parse_mode="Markdown")
 
 bot.infinity_polling()

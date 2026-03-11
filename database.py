@@ -6,6 +6,27 @@ class Database:
         self.connection = sqlite3.connect(db_file, check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.create_table()
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS incomes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            amount REAL,
+            category TEXT,
+            date TEXT)""")
+        self.connection.commit()
+
+
+    def add_income(self, user_id, amount, category, date):
+        self.cursor.execute("""INSERT INTO incomes (user_id, amount, category, date) VALUES (?, ?, ?, ?)""",
+                            (user_id, amount, category, date))
+        self.connection.commit()
+
+
+    def get_total_income(self, user_id):
+        self.cursor.execute("SELECT SUM(amount) FROM incomes WHERE user_id = ?", (user_id,))
+        result = self.cursor.fetchone()
+        return result[0] if result[0] else 0
+
+
 
     def create_table(self):
         # Твій вивчений SQL у дії! Створюємо таблицю витрат
@@ -78,3 +99,5 @@ class Database:
     def get_all_expenses_for_export(self, user_id):
         self.cursor.execute("SELECT amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC", (user_id,))
         return self.cursor.fetchall()
+
+
