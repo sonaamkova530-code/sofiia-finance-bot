@@ -1,5 +1,5 @@
-from unicodedata import category
 import keyboards
+import currency
 import os
 from dotenv import load_dotenv
 import telebot
@@ -10,7 +10,6 @@ import logging
 logging.basicConfig(
 level=logging.INFO,
 filename='bot.log',
-filemode='a',
 format = '%(asctime)s - %(levelname)s - %(message)s',)
 load_dotenv()
 db = Database('my_budget.db')
@@ -176,5 +175,22 @@ def total_balance(message):
         bot.send_photo(message.chat.id, photo, caption=report, parse_mode="Markdown")
     import os
     os.remove(chart_path)
+
+
+@bot.message_handler(commands=["rate"])
+def show_rate(message):
+    eur_rate = currency.get_exchange_rate("EUR")
+    usd_rate = currency.get_exchange_rate("USD")
+
+    if eur_rate and usd_rate:
+        text = (f"*Актуальний курс НБУ:*\n\n"
+                f"🇪🇺 Євро:* {eur_rate} грн*\n"
+                f"🇺🇸 Долар:* {usd_rate} грн*\n")
+        bot.send_message(message.chat.id, text, parse_mode="Markdown")
+
+    else:
+        bot.send_message(message.chat.id, "Не вдалося отримати курс. Спробуй пізніше.", parse_mode="Markdown")
+
+
 
 bot.infinity_polling()
