@@ -57,11 +57,8 @@ def save_all_data(message, amount):
 
 @bot.message_handler(func=lambda message: message.text == "Видалити останню")
 def delete(message):
-    success = db.delete_expense(message.chat.id)
-    if success:
-        bot.send_message(message.chat.id, "Видалено останній запис!")
-    else:
-        bot.send_message(message.chat.id, "У базі поки порожньо, видаляти нічого.")
+    markup = keyboards.get_delete_confirmation_menu()
+    bot.send_message(message.chat.id, "Ви точно хочете видалити останній запис?", reply_markup = markup)
 
 
 @bot.message_handler(func=lambda message: message.text == "Мої витрати")
@@ -162,17 +159,25 @@ def total_balance(message):
     total_income = db.get_total_income(message.chat.id)
     total_expenses = db.get_total_spending(message.chat.id)
     chart_path = reports.create_balance_chart(total_income, total_expenses, user_id)
+    balance_uah = total_income - total_expenses
 
-    balance = total_income - total_expenses
+    eur_rate = currency.get_exchange_rate("EUR")
+
+    if eur_rate:
+        balance_eur = round(balance_uah / eur_rate, 2)
+        eur_text = f" (~{balance_eur} EUR)"
+    else:
+        eur_text = ""
+
     report = (f"*Твій фінансовий звіт:*\n"
               f"Доходи: {total_income} грн\n"
               f"Витрати: {total_expenses} грн\n"
               f"----------------------\n"
-              f"*Залишок: {balance} грн*")
-    bot.send_message(message.chat.id, report, parse_mode="Markdown")
+              f"*Залишок: {balance_uah} грн*{eur_text}")
 
+    inline_markup = keyboards.get_balance_inline()
     with open(chart_path, 'rb') as photo:
-        bot.send_photo(message.chat.id, photo, caption=report, parse_mode="Markdown")
+        bot.send_photo(message.chat.id, photo, caption=report, parse_mode="Markdown", reply_markup=inline_markup)
     import os
     os.remove(chart_path)
 
@@ -191,6 +196,33 @@ def show_rate(message):
     else:
         bot.send_message(message.chat.id, "Не вдалося отримати курс. Спробуй пізніше.", parse_mode="Markdown")
 
+@bot.callback_query_handler(func=lambda call: call.data == "refresh_balance")
+def refresh_balance_callback(call):
+    bot.answer_callback_query(call.id, text="Оновлюю данні...")
+
+    total_balance(call.message)
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def handle_all_callbacks(call):
+    if call.data == "refresh_balance":
+        bot.answer_callback_query(call.id, text="Оновлюю данні...")
+        total_balance(call.message)
+
+    elif call.data == "confirm_delete":
+
+        success = db.delete_expense(call.message.chat.id)
+        if success:
+            new_text = "Видалено останній запис!"
+        else:
+            new_text = "Не вдалось знайти записів для видалення."
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=new_text)
+
+    elif call.data == "cancel_confirm":
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text= "Видалення скасовано.")
+
+    bot.answer_callback_query(call.id)
 
 
 bot.infinity_polling()
