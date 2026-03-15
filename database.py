@@ -101,3 +101,12 @@ class Database:
         return self.cursor.fetchall()
 
 
+    def get_weekly_stats(self, user_id):
+        query = """SELECT date, SUM(amount)
+        FROM expenses
+        WHERE user_id = ? AND date >= DATE('now', '-7 days')
+        GROUP BY date
+        ORDER BY date ASC"""
+
+        self.cursor.execute(query, (user_id,))
+        return self.cursor.fetchall()

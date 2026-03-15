@@ -59,3 +59,30 @@ def format_expense_report(data, period_name):
         return report
 
 
+def create_weekly_chart(data, user_id):
+    if not data:
+        return None
+
+    dates = [row[0][5:] for row in data]
+    amounts = [row[1] for row in data]
+    plt.figure(figsize = (10, 5))
+    plt.plot(dates, amounts, marker='o', linestyle = '-', color='#2ecc71', linewidth=2)
+    plt.fill_between(dates, amounts, color='#2ecc71', alpha=0.2)
+    for i, amount in enumerate(amounts):
+        plt.text(dates[i], amount + (max(amounts) * 0.02),
+                 f'{int(amount)}',
+                ha='center',
+                fontsize='10',
+                fontweight = 'bold',
+                color = '#2c3e50')
+
+    plt.title("Витрати за останній тиждень: ", fontsize = 14)
+    plt.ylabel("Грн")
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+
+
+    path = f"weekly_chart_{user_id}.png"
+    plt.savefig(path)
+    plt.close()
+    return path
