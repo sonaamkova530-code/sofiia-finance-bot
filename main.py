@@ -8,6 +8,7 @@ import reports
 from database import Database
 from datetime import datetime
 import logging
+from bot_service import BotService
 logging.basicConfig(
 level=logging.INFO,
 filename='bot.log',
@@ -37,7 +38,6 @@ class Validator:
 
 
 
-
 def log_action(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -60,16 +60,23 @@ def error_handler(func):
 
 @bot.message_handler(commands=['start'])
 @log_action
-def start(message):
-    markup = keyboards.get_main_menu()
-    bot.send_message(message.chat.id, "Привітик, обери дію:", reply_markup = markup)
+@error_handler
+def start_command(message):
+    BotService.send_welcome(bot, message.chat.id)
+
+
+@bot.message_handler(func=lambda message: message.text == "Видалити останню")
+@log_action
+def delete(message):
+    markup = keyboards.get_delete_confirmation_menu()
+    bot.send_message(message.chat.id, "Ви точно хочете видалити останній запис?", reply_markup = markup)
 
 @bot.message_handler(func=lambda message: message.text == "Додати витрату")
 @log_action
-def ask(message):
-    msg = bot.send_message(message.chat.id, "Введи суму (наприклад 150.5)")
+@error_handler
+def ask_for_amount(message):
+    msg = BotService.ask_amount(bot, message.chat.id)
     bot.register_next_step_handler(msg, get_amount)
-
 
 def get_amount(message):
     amount, error_msg = Validator.parse_amount(message.text)
@@ -77,9 +84,9 @@ def get_amount(message):
     if error_msg:
         bot.send_message(message.chat.id, error_msg)
         return
-
     markup = keyboards.get_categories_menu()
-    msg = bot.send_message(message.chat.id, "Обери категорію:", reply_markup = markup)
+    msg = BotService.ask_category(bot, message.chat.id, markup)
+
     bot.register_next_step_handler(msg, lambda m: save_all_data(m, amount))
 
 
@@ -91,18 +98,12 @@ def save_all_data(message, amount):
 
     db.add_expense(message.chat.id, amount, category, current_date)
 
-    markup = keyboards.get_main_menu()
-    bot.send_message(user_id, f"Збережено: {amount} грн, на '{category}'", reply_markup = markup)
+    text = f"Збережено: {amount} грн, на '{category}'"
     today_total = db.get_today_spending(user_id, current_date)
     if today_total > Config.DAILY_LIMIT:
-        bot.send_message(user_id, f"*Увага! Ти перевищила денний ліміт!\nСьогодні витрачено: *{today_total}* грн*", parse_mode = "Markdown")
+        text += f"\n\n*Увага! Ти перевищила денний ліміт!\nСьогодні витрачено: *{today_total}* грн*"
 
-
-@bot.message_handler(func=lambda message: message.text == "Видалити останню")
-@log_action
-def delete(message):
-    markup = keyboards.get_delete_confirmation_menu()
-    bot.send_message(message.chat.id, "Ви точно хочете видалити останній запис?", reply_markup = markup)
+    BotService.send_report(bot, user_id, text)
 
 
 @bot.message_handler(func=lambda message: message.text == "Мої витрати")
@@ -117,8 +118,7 @@ def show_menu(message):
 def show_daily(message):
     data = db.get_today_expenses(message.chat.id)
     text = reports.format_expense_report(data, "сьогодні")
-    bot.send_message(message.chat.id, text, parse_mode="Markdown")
-    start(message)
+    BotService.send_report(bot, message.chat.id, text)
 
 
 
@@ -130,17 +130,8 @@ def show_weekly(message):
 
     data_stats = db.get_weekly_stats(message.chat.id)
     chart_path = reports.create_weekly_chart(data_stats, message.chat.id)
-    if chart_path:
-        with open(chart_path, 'rb') as photo:
-            bot.send_photo(message.chat.id, photo, caption=text, parse_mode="Markdown")
-        import os
-        os.remove(chart_path)
-    else:
-        bot.send_message(message.chat.id, text, parse_mode="Markdown")
-    start(message)
 
-
-
+    BotService.send_report(bot, message.chat.id, text, chart_path)
 
 
 @bot.message_handler(func=lambda message: message.text == "Місяць")
@@ -148,14 +139,14 @@ def show_weekly(message):
 def show_monthly(message):
     data = db.get_expenses_by_period(message.chat.id, 30)
     text = reports.format_expense_report(data, "місяць")
-    bot.send_message(message.chat.id, text, parse_mode="Markdown")
-    start(message)
+
+    BotService.send_report(bot, message.chat.id, text)
 
 
 @bot.message_handler(func=lambda message: message.text == "Назад")
 @log_action
 def back(message):
-    start(message)
+    BotService.send_welcome(bot, message.chat.id)
 
 
 @bot.message_handler(func=lambda message: message.text == "Статистика")
@@ -164,19 +155,12 @@ def show_stats(message):
     stats = db.get_expenses_by_category(message.chat.id)
     chart_path = reports.create_stats_chart(stats, message.chat.id)
 
-    if chart_path:
-        with open(chart_path, 'rb') as file:
-            bot.send_photo(message.chat.id, file, caption="Твоя статистика у графіках:")
-        import os
-        os.remove(chart_path)
-
     if not stats:
         bot.send_message(message.chat.id, "Даних для статистики поки немає.")
     else:
         report = "*Витрати по категоріям:*\n"
         report += "\n".join([f"- {r[0]} | *{r[1]} грн*" for r in stats])
-        bot.send_message(message.chat.id, report, parse_mode="Markdown")
-        start(message)
+        BotService.send_report(bot, message.chat.id, report, chart_path)
 
 
 @bot.message_handler(func=lambda message: message.text == "Експорт в Excel")
