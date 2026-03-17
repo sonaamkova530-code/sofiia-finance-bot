@@ -273,4 +273,5 @@ def handle_all_callbacks(call):
     bot.answer_callback_query(call.id)
 
 
-bot.infinity_polling()
+if __name__ == "__main__":
+    bot.infinity_polling()
