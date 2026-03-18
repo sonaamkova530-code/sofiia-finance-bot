@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from database import Database
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 
 app = FastAPI(title="Budget Bot API")
+templates = Jinja2Templates(directory="templates")
 db = Database("my_budget.db")
 
 @app.get("/")
@@ -34,3 +38,21 @@ def get_analytics(user_id: int):
         "user_id": user_id,
         "analytics": breakdown
     }
+
+@app.get("/dashboard/{user_id}", response_class=HTMLResponse)
+def get_dashboard(request: Request, user_id: int):
+    raw_data = db.get_user_expenses(user_id)
+
+    expenses_list = []
+    for row in raw_data:
+        expenses_list.append({
+            "amount": row[0],
+            "category": row[1],
+            "date": row[2],
+        })
+
+    return templates.TemplateResponse("index.html",{
+        "request": request,
+        "user_id": user_id,
+        "expenses": expenses_list
+    })
