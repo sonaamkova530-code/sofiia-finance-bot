@@ -42,7 +42,8 @@ def get_analytics(user_id: int):
 @app.get("/dashboard/{user_id}", response_class=HTMLResponse)
 def get_dashboard(request: Request, user_id: int):
     raw_data = db.get_user_expenses(user_id)
-
+    total_sum = sum([row[0] for row in raw_data])
+    count = len(raw_data)
     expenses_list = []
     for row in raw_data:
         expenses_list.append({
@@ -51,8 +52,19 @@ def get_dashboard(request: Request, user_id: int):
             "date": row[2],
         })
 
+    limit = 3000
+    status = "В нормі"
+    status_color = "#e8f0fe"
+    if total_sum > limit:
+        status = "Перевищення!"
+        status_color = "#fce8e6"
+
     return templates.TemplateResponse("index.html",{
         "request": request,
         "user_id": user_id,
-        "expenses": expenses_list
+        "expenses": expenses_list,
+        "total": total_sum,
+        "count": count,
+        "status": status,
+        "status_color": status_color,
     })
