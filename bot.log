@@ -49832,3 +49832,171 @@ Traceback (most recent call last):
     raise ConnectionError(e, request=request)
 requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.telegram.org', port=443): Max retries exceeded with url: /bot7673171820:***********************************/getUpdates?offset=212471919&timeout=20 (Caused by NameResolutionError("HTTPSConnection(host='api.telegram.org', port=443): Failed to resolve 'api.telegram.org' ([Errno 11001] getaddrinfo failed)"))
 
+2026-03-19 20:29:29,823 - ERROR - Infinity polling exception: unrecognized token: ""INSERT INTO settings (user_id, daily_limit) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET daily_limit = ?"
+2026-03-19 20:29:29,950 - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 logger_level=logger_level, allowed_updates=allowed_updates, restart_on_change=False,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            logger_level=logger_level, allowed_updates=allowed_updates)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 97, in run
+    task(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\main.py", line 295, in process_daily_limit_step
+    db.update_user_limit(user_id, daily = new_limit)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\database.py", line 124, in update_user_limit
+    self.cursor.execute(query, (user_id, daily, daily))
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: unrecognized token: ""INSERT INTO settings (user_id, daily_limit) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET daily_limit = ?"
+
+2026-03-19 20:36:32,188 - ERROR - Infinity polling exception: no such table: settings
+2026-03-19 20:36:32,192 - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 logger_level=logger_level, allowed_updates=allowed_updates, restart_on_change=False,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            logger_level=logger_level, allowed_updates=allowed_updates)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 97, in run
+    task(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\main.py", line 295, in process_daily_limit_step
+    db.update_user_limit(user_id, daily = new_limit)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\database.py", line 124, in update_user_limit
+    self.cursor.execute(query, (user_id, daily, daily))
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: settings
+
+2026-03-19 20:56:20,557 - ERROR - Infinity polling exception: parameters are of unsupported type
+2026-03-19 20:56:20,559 - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 logger_level=logger_level, allowed_updates=allowed_updates, restart_on_change=False,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            logger_level=logger_level, allowed_updates=allowed_updates)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 97, in run
+    task(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\main.py", line 314, in show_settings
+    settings = db.get_user_settings(user_id)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\database.py", line 133, in get_user_settings
+    self.cursor.execute("SELECT daily_limit, monthly_limit FROM settings WHERE user_id = ?", user_id)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.ProgrammingError: parameters are of unsupported type
+
+2026-03-19 20:56:27,913 - ERROR - Infinity polling exception: parameters are of unsupported type
+2026-03-19 20:56:27,914 - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 logger_level=logger_level, allowed_updates=allowed_updates, restart_on_change=False,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            logger_level=logger_level, allowed_updates=allowed_updates)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 97, in run
+    task(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\main.py", line 314, in show_settings
+    settings = db.get_user_settings(user_id)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\database.py", line 133, in get_user_settings
+    self.cursor.execute("SELECT daily_limit, monthly_limit FROM settings WHERE user_id = ?", user_id)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.ProgrammingError: parameters are of unsupported type
+
+2026-03-19 20:58:06,337 - ERROR - Infinity polling exception: list index out of range
+2026-03-19 20:58:06,339 - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 logger_level=logger_level, allowed_updates=allowed_updates, restart_on_change=False,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            logger_level=logger_level, allowed_updates=allowed_updates)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 97, in run
+    task(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\main.py", line 312, in show_settings
+    settings = db.get_user_settings(user_id)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\database.py", line 136, in get_user_settings
+    return {"daily": result[0], "monthly": result[1]}
+                                           ~~~~~~^^^
+IndexError: list index out of range
+

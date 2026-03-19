@@ -6,6 +6,7 @@ class Database:
         self.connection = sqlite3.connect(db_file, check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.create_table()
+        self.create_settings_table()
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS incomes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -74,7 +75,7 @@ class Database:
     def get_today_spending(self, user_id, date):
         self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ? AND date = ?", (user_id, date))
         result = self.cursor.fetchone()
-        return result[0] if result is not None else 0
+        return result[0] if result[0] is not None else 0
 
 
     def get_expenses_by_period(self, user_id, days):
@@ -110,3 +111,27 @@ class Database:
 
         self.cursor.execute(query, (user_id,))
         return self.cursor.fetchall()
+
+    def create_settings_table(self):
+        query = """CREATE TABLE IF NOT EXISTS settings (
+        user_id INTEGER PRIMARY KEY,
+        daily_limit REAL DEFAULT 500.0,
+        monthly_limit REAL DEFAULT 5000.0)"""
+        self.cursor.execute(query)
+
+    def update_user_limit(self, user_id, daily=None, monthly=None):
+        if daily is not None:
+            query = "INSERT INTO settings (user_id, daily_limit) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET daily_limit=?"
+            self.cursor.execute(query, (user_id, daily, daily))
+        if monthly is not None:
+            query = "INSERT INTO settings (user_id, monthly_limit) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET monthly_limit=?"
+            self.cursor.execute(query, (user_id, monthly, monthly))
+
+        self.connection.commit()
+
+    def get_user_settings(self, user_id):
+        self.cursor.execute("SELECT daily_limit, monthly_limit FROM settings WHERE user_id = ?", (user_id,))
+        result = self.cursor.fetchone()
+        if result:
+            return {"daily": result[0], "monthly": result[1]}
+        return {"daily": 500.0, "monthly": 5000.0}

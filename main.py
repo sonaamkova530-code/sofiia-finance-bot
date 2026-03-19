@@ -18,6 +18,7 @@ load_dotenv()
 class Config:
     TOKEN = os.getenv("TOKEN")
     DAILY_LIMIT= float(os.getenv("DAILY_LIMIT", 500))
+    MONTHLY_LIMIT = 5000
     DB_NAME = "my_budget.db"
     PRIMARY_CURRENCY = os.getenv("CURRENCY_PRIMARY", "EUR")
 db = Database(Config.DB_NAME)
@@ -102,7 +103,9 @@ def save_all_data(message, amount):
     today_total = db.get_today_spending(user_id, current_date)
     if today_total > Config.DAILY_LIMIT:
         text += f"\n\n*Увага! Ти перевищила денний ліміт!\nСьогодні витрачено: *{today_total}* грн*"
-
+    total_spent = db.get_total_spending(user_id)
+    if total_spent > Config.MONTHLY_LIMIT:
+        text += f"\n\n*ГЛОБАЛЬНИЙ ЛІМІТ!*\nЗагальна сума: {total_spent} грн.\nПора зупинитися!"
     BotService.send_report(bot, user_id, text)
 
 
@@ -253,6 +256,8 @@ def show_rate(message):
 @bot.callback_query_handler(func=lambda call: True)
 @log_action
 def handle_all_callbacks(call):
+    user_id = call.message.chat.id
+
     if call.data == "refresh_balance":
         bot.answer_callback_query(call.id, text="Оновлюю данні...")
         total_balance(call.message)
@@ -270,7 +275,61 @@ def handle_all_callbacks(call):
     elif call.data == "cancel_confirm":
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text= "Видалення скасовано.")
 
+    elif call.data == "set_daily":
+        bot.answer_callback_query(call.id)
+        msg = bot.send_message(user_id, "Введіть новий **денний** ліміт (цифрами):", parse_mode="Markdown")
+        bot.register_next_step_handler(msg, process_daily_limit_step)
+
+    elif call.data == "set_monthly":
+        bot.answer_callback_query(call.id)
+        msg = bot.send_message(user_id, "Введіть новий **місячний** ліміт (цифрами):", parse_mode="Markdown")
+        bot.register_next_step_handler(msg, process_monthly_limit_step)
+
     bot.answer_callback_query(call.id)
+
+def process_daily_limit_step(message):
+    try:
+        new_limit = float(message.text)
+        user_id = message.chat.id
+        db.update_user_limit(user_id, daily = new_limit)
+        bot.send_message(user_id, f"Денний ліміт оновлено до {new_limit}!")
+    except ValueError:
+        bot.send_message(message.chat.id, "Помилка! Введіть число (наприклад, 600). Спробуйте ще раз /settings")
+
+def process_monthly_limit_step(message):
+    try:
+        new_limit = float(message.text)
+        user_id = message.chat.id
+        db.update_user_limit(user_id, monthly = new_limit)
+        bot.send_message(user_id, f"Місячний ліміт оновлено до {new_limit}!")
+    except ValueError:
+        bot.send_message(message.chat.id, "Помилка! Введіть число. Спробуйте ще раз /settings")
+
+
+@bot.message_handler(commands=['settings'])
+def show_settings(message):
+    user_id = message.chat.id
+    settings = db.get_user_settings(user_id)
+
+    daily = settings["daily"]
+    monthly = settings["monthly"]
+
+    text = (
+        f"**Налаштування бюджету**\n\n"
+        f"Твій денний ліміт: **{daily}**\n"
+        f"Твій місячний ліміт: **{monthly}**\n"
+        "Що саме хочеш змінити?"
+    )
+
+    markup = telebot.types.InlineKeyboardMarkup()
+    btn_daily = telebot.types.InlineKeyboardButton("Змінити денний ліміт", callback_data="set_daily")
+    btn_monthly = telebot.types.InlineKeyboardButton("Змінити місячний ліміт", callback_data="set_monthly")
+    markup.add(btn_daily, btn_monthly)
+
+
+    bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
+
+
 
 
 if __name__ == "__main__":
