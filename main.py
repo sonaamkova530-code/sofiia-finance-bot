@@ -9,6 +9,7 @@ from database import Database
 from datetime import datetime
 import logging
 from bot_service import BotService
+from apscheduler.schedulers.background import BackgroundScheduler
 logging.basicConfig(
 level=logging.INFO,
 filename='bot.log',
@@ -36,6 +37,39 @@ class Validator:
             return amount, None
         except ValueError:
             return None, "Будь ласка, введи суму цифрами (наприклад: 105.45)"
+
+
+def send_weekly_report():
+    user_id = 5096558702
+    current_week_data = db.get_weekly_stats(user_id)
+    current_week_total = sum(row[1] for row in current_week_data) if current_week_data else 0
+    last_week_total = db.get_last_week(user_id)
+
+    if current_week_total == 0 and last_week_total == 0:
+        return
+
+    diff = current_week_total - last_week_total
+
+    if last_week_total > 0:
+        percent = (diff / last_week_total) * 100
+    else:
+        percent = 100 if current_week_total > 0 else 0
+
+    if diff > 0:
+        trend = f"Це на **{abs(int(percent))}% більше**, ніж минулого тижня. Час пригальмувати з витратами!"
+    elif diff < 0:
+        trend = f"Це на **{abs(int(percent))}% менше**, ніж минулого тижня. Так тримати!"
+    else:
+        trend = "Витратила точно ту ж суму як минулого тижня. Стабільність!"
+
+    report_text = (
+        f"**Твій щотижневий фінансовий аналіз**\n\n"
+        f"Цього тижня: **{current_week_total} ₴**\n"
+        f"Минулого тижня: **{last_week_total} ₴**\n"
+        f"{trend}\n\n"
+        f"Детальніше на [Дашборді](http://127.0.0.1:8001/dashboard/{user_id})"
+        )
+    bot.send_message(user_id, report_text, parse_mode="Markdown")
 
 
 
@@ -331,6 +365,8 @@ def show_settings(message):
 
 
 
-
+scheduler = BackgroundScheduler()
+scheduler.add_job(send_weekly_report,'cron', day_of_week='mon', hour=9, minute=0)
+scheduler.start()
 if __name__ == "__main__":
     bot.infinity_polling()

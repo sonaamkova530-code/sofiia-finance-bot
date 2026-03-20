@@ -50000,3 +50000,215 @@ Traceback (most recent call last):
                                            ~~~~~~^^^
 IndexError: list index out of range
 
+2026-03-20 08:32:28,029 - ERROR - Infinity polling exception: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+2026-03-20 08:32:28,046 - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\connection.py", line 571, in getresponse
+    httplib_response = super().getresponse()
+  File "C:\Users\Sofiia\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 1430, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 331, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\AppData\Local\Programs\Python\Python313\Lib\http\client.py", line 292, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\Sofiia\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1304, in recv_into
+    return self.read(nbytes, buffer)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\AppData\Local\Programs\Python\Python313\Lib\ssl.py", line 1138, in read
+    return self._sslobj.read(len, buffer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\requests\adapters.py", line 644, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\util\retry.py", line 490, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 logger_level=logger_level, allowed_updates=allowed_updates, restart_on_change=False,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 *args, **kwargs)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            logger_level=logger_level, allowed_updates=allowed_updates)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\util.py", line 97, in run
+    task(*args, **kwargs)
+    ~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+                               allowed_updates=allowed_updates,
+                               timeout=timeout, long_polling_timeout=long_polling_timeout)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+        self.token, offset=offset, limit=limit, timeout=timeout, allowed_updates=allowed_updates,
+        long_polling_timeout=long_polling_timeout)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\telebot\apihelper.py", line 162, in _make_request
+    result = _get_req_session().request(
+        method, request_url, params=params, files=files,
+        timeout=(connect_timeout, read_timeout), proxies=proxy)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Sofiia\PycharmProjects\PythonProject\.venv\Lib\site-packages\requests\adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+
+2026-03-20 12:41:10,868 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:41:10,869 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:41:10,869 - INFO - Scheduler started
+2026-03-20 12:42:10,883 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 12:43:10 EET)" (scheduled at 2026-03-20 12:42:10.868640+02:00)
+2026-03-20 12:42:11,688 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 12:43:10 EET)" executed successfully
+2026-03-20 12:43:10,873 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 12:44:10 EET)" (scheduled at 2026-03-20 12:43:10.868640+02:00)
+2026-03-20 12:43:18,040 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 12:44:10 EET)" executed successfully
+2026-03-20 12:44:10,872 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 12:45:10 EET)" (scheduled at 2026-03-20 12:44:10.868640+02:00)
+2026-03-20 12:44:10,942 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 12:45:10 EET)" executed successfully
+2026-03-20 12:44:54,182 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:44:54,185 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:44:54,185 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:44:54,186 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:44:54,186 - INFO - Scheduler started
+2026-03-20 12:45:04,185 - INFO - Running job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:14 EET)" (scheduled at 2026-03-20 12:45:04.182209+02:00)
+2026-03-20 12:45:04,647 - INFO - Job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:14 EET)" executed successfully
+2026-03-20 12:45:06,095 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:45:06,097 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:45:06,098 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:45:06,098 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:45:06,098 - INFO - Scheduler started
+2026-03-20 12:45:16,111 - INFO - Running job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:26 EET)" (scheduled at 2026-03-20 12:45:16.095407+02:00)
+2026-03-20 12:45:16,906 - INFO - Job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:26 EET)" executed successfully
+2026-03-20 12:45:26,098 - INFO - Running job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:36 EET)" (scheduled at 2026-03-20 12:45:26.095407+02:00)
+2026-03-20 12:45:26,250 - INFO - Job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:36 EET)" executed successfully
+2026-03-20 12:45:36,096 - INFO - Running job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:46 EET)" (scheduled at 2026-03-20 12:45:36.095407+02:00)
+2026-03-20 12:45:36,183 - INFO - Job "send_weekly_report (trigger: interval[0:00:10], next run at: 2026-03-20 12:45:46 EET)" executed successfully
+2026-03-20 12:45:42,169 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:45:42,171 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:45:42,171 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:45:42,171 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:45:42,171 - INFO - Scheduler started
+2026-03-20 12:45:43,173 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:44 EET)" (scheduled at 2026-03-20 12:45:43.168967+02:00)
+2026-03-20 12:45:43,577 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:44 EET)" executed successfully
+2026-03-20 12:45:44,181 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:45 EET)" (scheduled at 2026-03-20 12:45:44.168967+02:00)
+2026-03-20 12:45:44,266 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:45 EET)" executed successfully
+2026-03-20 12:45:45,176 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:46 EET)" (scheduled at 2026-03-20 12:45:45.168967+02:00)
+2026-03-20 12:45:45,296 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:46 EET)" executed successfully
+2026-03-20 12:45:46,171 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:47 EET)" (scheduled at 2026-03-20 12:45:46.168967+02:00)
+2026-03-20 12:45:46,265 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:47 EET)" executed successfully
+2026-03-20 12:45:47,175 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:48 EET)" (scheduled at 2026-03-20 12:45:47.168967+02:00)
+2026-03-20 12:45:47,268 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:48 EET)" executed successfully
+2026-03-20 12:45:48,172 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:49 EET)" (scheduled at 2026-03-20 12:45:48.168967+02:00)
+2026-03-20 12:45:48,272 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:49 EET)" executed successfully
+2026-03-20 12:45:49,185 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:50 EET)" (scheduled at 2026-03-20 12:45:49.168967+02:00)
+2026-03-20 12:45:49,497 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:50 EET)" executed successfully
+2026-03-20 12:45:50,171 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:51 EET)" (scheduled at 2026-03-20 12:45:50.168967+02:00)
+2026-03-20 12:45:50,260 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:51 EET)" executed successfully
+2026-03-20 12:45:51,175 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:52 EET)" (scheduled at 2026-03-20 12:45:51.168967+02:00)
+2026-03-20 12:45:51,241 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:52 EET)" executed successfully
+2026-03-20 12:45:52,172 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:53 EET)" (scheduled at 2026-03-20 12:45:52.168967+02:00)
+2026-03-20 12:45:52,265 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:53 EET)" executed successfully
+2026-03-20 12:45:53,180 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:54 EET)" (scheduled at 2026-03-20 12:45:53.168967+02:00)
+2026-03-20 12:45:53,254 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:54 EET)" executed successfully
+2026-03-20 12:45:54,174 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:55 EET)" (scheduled at 2026-03-20 12:45:54.168967+02:00)
+2026-03-20 12:45:54,251 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:55 EET)" executed successfully
+2026-03-20 12:45:55,172 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:56 EET)" (scheduled at 2026-03-20 12:45:55.168967+02:00)
+2026-03-20 12:45:55,276 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:56 EET)" executed successfully
+2026-03-20 12:45:56,185 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:57 EET)" (scheduled at 2026-03-20 12:45:56.168967+02:00)
+2026-03-20 12:45:56,261 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:57 EET)" executed successfully
+2026-03-20 12:45:57,178 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:58 EET)" (scheduled at 2026-03-20 12:45:57.168967+02:00)
+2026-03-20 12:45:57,297 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:58 EET)" executed successfully
+2026-03-20 12:45:58,170 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:59 EET)" (scheduled at 2026-03-20 12:45:58.168967+02:00)
+2026-03-20 12:45:58,274 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:45:59 EET)" executed successfully
+2026-03-20 12:45:59,170 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:00 EET)" (scheduled at 2026-03-20 12:45:59.168967+02:00)
+2026-03-20 12:45:59,279 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:00 EET)" executed successfully
+2026-03-20 12:46:00,173 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:01 EET)" (scheduled at 2026-03-20 12:46:00.168967+02:00)
+2026-03-20 12:46:00,265 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:01 EET)" executed successfully
+2026-03-20 12:46:01,179 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:02 EET)" (scheduled at 2026-03-20 12:46:01.168967+02:00)
+2026-03-20 12:46:01,282 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:02 EET)" executed successfully
+2026-03-20 12:46:02,176 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:03 EET)" (scheduled at 2026-03-20 12:46:02.168967+02:00)
+2026-03-20 12:46:02,319 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:03 EET)" executed successfully
+2026-03-20 12:46:03,169 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:04 EET)" (scheduled at 2026-03-20 12:46:03.168967+02:00)
+2026-03-20 12:46:03,282 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:04 EET)" executed successfully
+2026-03-20 12:46:04,178 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:05 EET)" (scheduled at 2026-03-20 12:46:04.168967+02:00)
+2026-03-20 12:46:04,279 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:05 EET)" executed successfully
+2026-03-20 12:46:05,183 - INFO - Running job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:06 EET)" (scheduled at 2026-03-20 12:46:05.168967+02:00)
+2026-03-20 12:46:05,270 - INFO - Job "send_weekly_report (trigger: interval[0:00:01], next run at: 2026-03-20 12:46:06 EET)" executed successfully
+2026-03-20 12:46:08,476 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:46:08,476 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:46:08,476 - INFO - Scheduler started
+2026-03-20 12:46:11,872 - ERROR - Infinity polling: polling exited
+2026-03-20 12:46:11,873 - ERROR - Break infinity polling
+2026-03-20 12:46:13,958 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 12:46:13,959 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 12:46:13,959 - INFO - Scheduler started
+2026-03-20 15:05:20,037 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 15:05:20,038 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 15:05:20,038 - INFO - Scheduler started
+2026-03-20 15:05:23,815 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 15:05:23,815 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 15:05:23,815 - INFO - Scheduler started
+2026-03-20 15:08:12,585 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-20 15:08:12,585 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-20 15:08:12,585 - INFO - Scheduler started
+2026-03-20 15:09:12,591 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:10:12 EET)" (scheduled at 2026-03-20 15:09:12.585112+02:00)
+2026-03-20 15:09:13,621 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:10:12 EET)" executed successfully
+2026-03-20 15:10:12,596 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:11:12 EET)" (scheduled at 2026-03-20 15:10:12.585112+02:00)
+2026-03-20 15:10:12,726 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:11:12 EET)" executed successfully
+2026-03-20 15:11:12,600 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:12:12 EET)" (scheduled at 2026-03-20 15:11:12.585112+02:00)
+2026-03-20 15:11:12,829 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:12:12 EET)" executed successfully
+2026-03-20 15:12:12,594 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:13:12 EET)" (scheduled at 2026-03-20 15:12:12.585112+02:00)
+2026-03-20 15:12:12,667 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:13:12 EET)" executed successfully
+2026-03-20 15:13:12,591 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:14:12 EET)" (scheduled at 2026-03-20 15:13:12.585112+02:00)
+2026-03-20 15:13:12,745 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:14:12 EET)" executed successfully

@@ -108,7 +108,6 @@ class Database:
         WHERE user_id = ? AND date >= DATE('now', '-7 days')
         GROUP BY date
         ORDER BY date ASC"""
-
         self.cursor.execute(query, (user_id,))
         return self.cursor.fetchall()
 
@@ -135,3 +134,9 @@ class Database:
         if result:
             return {"daily": result[0], "monthly": result[1]}
         return {"daily": 500.0, "monthly": 5000.0}
+
+    def get_last_week(self, user_id):
+        query = ("SELECT SUM(amount) FROM expenses WHERE user_id = ? AND date BETWEEN DATE('now', '-14 days') AND DATE ('now', '-8 days')")
+        self.cursor.execute(query, (user_id,))
+        result = self.cursor.fetchone()
+        return result[0] if result[0] is not None else 0

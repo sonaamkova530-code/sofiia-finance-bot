@@ -43,6 +43,9 @@ def get_analytics(user_id: int):
 def get_dashboard(request: Request, user_id: int):
     raw_data = db.get_user_expenses(user_id)
     total_sum = sum([row[0] for row in raw_data])
+    cat_stats = db.get_expenses_by_category(user_id)
+    labels = [row[0] for row in cat_stats]
+    values = [row[1] for row in cat_stats]
     count = len(raw_data)
     expenses_list = []
     for row in raw_data:
@@ -61,6 +64,8 @@ def get_dashboard(request: Request, user_id: int):
 
     return templates.TemplateResponse("index.html",{
         "request": request,
+        "chart_labels": labels,
+        "chart_values": values,
         "user_id": user_id,
         "expenses": expenses_list,
         "total": total_sum,
