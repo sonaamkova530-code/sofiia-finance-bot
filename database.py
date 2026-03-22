@@ -140,3 +140,16 @@ class Database:
         self.cursor.execute(query, (user_id,))
         result = self.cursor.fetchone()
         return result[0] if result[0] is not None else 0
+
+    def suggest_category(self,user_id, text):
+        query = ("SELECT category FROM expenses WHERE user_id = ? AND (category LIKE ? OR ? LIKE '%' || category || '%') ORDER BY id DESC LIMIT 1")
+        search_text = f'%{text}%'
+        self.cursor.execute(query, (user_id, search_text, text))
+        result = self.cursor.fetchall()
+        return result[0] if result else None
+    def get_db_status(self):
+        self.cursor.execute("SELECT COUNT(*) FROM expenses")
+        count = self.cursor.fetchone()[0]
+        return count
+
+

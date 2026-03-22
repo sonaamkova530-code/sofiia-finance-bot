@@ -50212,3 +50212,16 @@ requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', po
 2026-03-20 15:12:12,667 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:13:12 EET)" executed successfully
 2026-03-20 15:13:12,591 - INFO - Running job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:14:12 EET)" (scheduled at 2026-03-20 15:13:12.585112+02:00)
 2026-03-20 15:13:12,745 - INFO - Job "send_weekly_report (trigger: interval[0:01:00], next run at: 2026-03-20 15:14:12 EET)" executed successfully
+2026-03-22 15:13:32,261 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-22 15:13:32,262 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-22 15:13:32,262 - INFO - Scheduler started
+2026-03-22 15:24:54,048 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-22 15:24:54,048 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-22 15:24:54,048 - INFO - Scheduler started
+2026-03-22 16:50:25,060 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-22 16:50:25,061 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-22 16:50:25,061 - INFO - Scheduler started
+2026-03-22 16:57:57,876 - INFO - Scheduler has been shut down
+2026-03-22 16:57:59,025 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-22 16:57:59,025 - INFO - Added job "send_weekly_report" to job store "default"
+2026-03-22 16:57:59,025 - INFO - Scheduler started

@@ -1,7 +1,9 @@
 import keyboards
 import functools
 import currency
+import platform
 import os
+import signal
 from dotenv import load_dotenv
 import telebot
 import reports
@@ -56,16 +58,16 @@ def send_weekly_report():
         percent = 100 if current_week_total > 0 else 0
 
     if diff > 0:
-        trend = f"Це на **{abs(int(percent))}% більше**, ніж минулого тижня. Час пригальмувати з витратами!"
+        trend = f"Це на *{abs(int(percent))}% більше*, ніж минулого тижня. Час пригальмувати з витратами!"
     elif diff < 0:
-        trend = f"Це на **{abs(int(percent))}% менше**, ніж минулого тижня. Так тримати!"
+        trend = f"Це на *{abs(int(percent))}% менше*, ніж минулого тижня. Так тримати!"
     else:
         trend = "Витратила точно ту ж суму як минулого тижня. Стабільність!"
 
     report_text = (
-        f"**Твій щотижневий фінансовий аналіз**\n\n"
-        f"Цього тижня: **{current_week_total} ₴**\n"
-        f"Минулого тижня: **{last_week_total} ₴**\n"
+        f"*Твій щотижневий фінансовий аналіз*\n\n"
+        f"Цього тижня: *{current_week_total} ₴*\n"
+        f"Минулого тижня: *{last_week_total} ₴*\n"
         f"{trend}\n\n"
         f"Детальніше на [Дашборді](http://127.0.0.1:8001/dashboard/{user_id})"
         )
@@ -88,7 +90,18 @@ def error_handler(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            print(f"[ERROR] Помилка у функції {func.__name__}: {e}")
+            error_msg = (f"*Критична помилка:*\n\n"
+            f"📌 *Функція:* `{func.__name__}`\n"
+                f"⚠️ *Тип:* `{type(e).__name__}`\n"
+                f"📝 *Текст:* `{e}`\n\n"
+                f"🕒 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            )
+            print(f"[ERROR] {error_msg}")
+
+        try:
+            bot.send_message(5096558702, error_msg, parse_mode="Markdown")
+        except Exception as bot_error:
+            print(f"Навіть повідомлення про помилку не відправилось: {bot_error}")
             return None
     return wrapper
 
@@ -110,18 +123,26 @@ def delete(message):
 @log_action
 @error_handler
 def ask_for_amount(message):
-    msg = BotService.ask_amount(bot, message.chat.id)
+    user_id = message.chat.id
+    msg = BotService.ask_amount(bot, user_id)
     bot.register_next_step_handler(msg, get_amount)
 
 def get_amount(message):
-    amount, error_msg = Validator.parse_amount(message.text)
+    text_parts = message.text.split()
+    search_term = text_parts[1] if len(text_parts) > 1 else message.text
+    suggested = db.suggest_category(message.chat.id, search_term)
+    amount, error_msg = Validator.parse_amount(text_parts[0])
 
     if error_msg:
         bot.send_message(message.chat.id, error_msg)
         return
     markup = keyboards.get_categories_menu()
-    msg = BotService.ask_category(bot, message.chat.id, markup)
 
+    display_text = "Обери категорію:"
+    if suggested:
+        display_text = f"Я думаю це **{suggested}**. Правильно? Чи обери іншу:"
+
+    msg = bot.send_message(message.chat.id, display_text, reply_markup = markup, parse_mode="Markdown")
     bot.register_next_step_handler(msg, lambda m: save_all_data(m, amount))
 
 
@@ -311,12 +332,12 @@ def handle_all_callbacks(call):
 
     elif call.data == "set_daily":
         bot.answer_callback_query(call.id)
-        msg = bot.send_message(user_id, "Введіть новий **денний** ліміт (цифрами):", parse_mode="Markdown")
+        msg = bot.send_message(user_id, "Введіть новий *денний* ліміт (цифрами):", parse_mode="Markdown")
         bot.register_next_step_handler(msg, process_daily_limit_step)
 
     elif call.data == "set_monthly":
         bot.answer_callback_query(call.id)
-        msg = bot.send_message(user_id, "Введіть новий **місячний** ліміт (цифрами):", parse_mode="Markdown")
+        msg = bot.send_message(user_id, "Введіть новий *місячний* ліміт (цифрами):", parse_mode="Markdown")
         bot.register_next_step_handler(msg, process_monthly_limit_step)
 
     bot.answer_callback_query(call.id)
@@ -349,9 +370,9 @@ def show_settings(message):
     monthly = settings["monthly"]
 
     text = (
-        f"**Налаштування бюджету**\n\n"
-        f"Твій денний ліміт: **{daily}**\n"
-        f"Твій місячний ліміт: **{monthly}**\n"
+        f"*Налаштування бюджету*\n\n"
+        f"Твій денний ліміт: *{daily}*\n"
+        f"Твій місячний ліміт: *{monthly}*\n"
         "Що саме хочеш змінити?"
     )
 
@@ -362,6 +383,33 @@ def show_settings(message):
 
 
     bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
+
+@bot.message_handler(commands=['status'])
+@error_handler
+def system_status(message):
+    if message.chat.id != 5096558702:
+        bot.send_message(message.chat.id, "У вас немає доступу до цієї команди")
+        return
+    db_count = db.get_db_status()
+    py_version = platform.python_version()
+    os_info = platform.system()
+    status_text = (
+        f"*System Health Check:*\n\n"
+        f"*Бот:* Online\n"
+        f"*База даних:* Connected\n"
+        f"*Записів у БД:* `{db_count}`\n"
+        f"*Python:* `{py_version}`\n"
+        f"*ОС:* `{os_info}`\n"
+        f"*Час сервера:* `{datetime.now().strftime('%H:%M:%S')}`"
+    )
+    bot.send_message(message.chat.id, status_text, parse_mode="Markdown")
+
+
+def signal_handler(_signal, _frame):
+    bot.send_message(5096558702, "Бот вимикається для оновлення або технічних робіт. Скоро повернуся!")
+    scheduler.shutdown()
+    os._exit(0)
+signal.signal(signal.SIGINT, signal_handler)
 
 
 

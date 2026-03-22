@@ -25,8 +25,11 @@ class BotService:
 
 
     @staticmethod
-    def ask_amount(bot, chat_id, text="Введи суму (наприклад 150.60)"):
-        return bot.send_message(chat_id, text)
+    def ask_amount(bot, chat_id, suggested_cat=None):
+        text="Введи суму (наприклад 150.60)"
+        if suggested_cat:
+            text = f"Здається це *{suggested_cat}*.\nВведи суму (наприклад 150.60)"
+        return bot.send_message(chat_id, text, parse_mode="Markdown")
 
     @staticmethod
     def ask_category(bot, chat_id, markup):
