@@ -50225,3 +50225,4 @@ requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', po
 2026-03-22 16:57:59,025 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
 2026-03-22 16:57:59,025 - INFO - Added job "send_weekly_report" to job store "default"
 2026-03-22 16:57:59,025 - INFO - Scheduler started
+2026-03-22 17:04:11,394 - INFO - Scheduler has been shut down

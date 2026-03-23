@@ -1,155 +1,152 @@
-import sqlite3
+import aiosqlite
 
 class Database:
     def __init__(self, db_file):
-        # Підключаємося до файлу бази даних
-        self.connection = sqlite3.connect(db_file, check_same_thread=False)
-        self.cursor = self.connection.cursor()
-        self.create_table()
-        self.create_settings_table()
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS incomes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            amount REAL,
-            category TEXT,
-            date TEXT)""")
-        self.connection.commit()
+        self.db_file = db_file
 
+    async def _execute(self, query, params=()):
+        async with aiosqlite.connect(self.db_file) as db:
+            async with db.execute(query, params) as cursor:
+                results = await cursor.fetchall()
+                await db.commit()
+                return results
 
-    def add_income(self, user_id, amount, category, date):
-        self.cursor.execute("""INSERT INTO incomes (user_id, amount, category, date) VALUES (?, ?, ?, ?)""",
-                            (user_id, amount, category, date))
-        self.connection.commit()
-
-
-    def get_total_income(self, user_id):
-        self.cursor.execute("SELECT SUM(amount) FROM incomes WHERE user_id = ?", (user_id,))
-        result = self.cursor.fetchone()
-        return result[0] if result[0] else 0
-
-
-
-    def create_table(self):
-        # Твій вивчений SQL у дії! Створюємо таблицю витрат
-        with self.connection:
-            return self.cursor.execute("""
+    async def init_db(self):
+        async with aiosqlite.connect(self.db_file) as db:
+            await db.execute("""
                 CREATE TABLE IF NOT EXISTS expenses (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
                     amount REAL,
                     category TEXT,
-                    date TEXT
-                )
+                    date TEXT)
             """)
+            await db.execute("""
+                CREATE TABLE IF NOT EXISTS incomes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    amount REAL,
+                    category TEXT,
+                    date TEXT)
+            """)
+            await db.execute("""
+                CREATE TABLE IF NOT EXISTS settings (
+                    user_id INTEGER PRIMARY KEY,
+                    daily_limit REAL DEFAULT 500,
+                    monthly_limit REAL DEFAULT 5000)
+                """)
+            await db.commit()
 
-    def add_expense(self, user_id, amount, category, date):
-        # Команда INSERT для додавання даних
-        with self.connection:
-            return self.cursor.execute(
-                "INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)",
-                (user_id, amount, category, date)
-            )
 
-    def delete_expense(self, user_id):
-        self.cursor.execute("SELECT id FROM expenses WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
-        last_id = self.cursor.fetchone()
-        if last_id:
-            self.cursor.execute("DELETE FROM expenses WHERE id = ?", (last_id[0],))
-            self.connection.commit()
+
+
+    async def add_income(self, user_id, amount, category, date):
+        query = """INSERT INTO incomes (user_id, amount, category, date) VALUES (?, ?, ?, ?)"""
+        await self._execute(query, (user_id, amount, category, date))
+
+
+    async def get_total_income(self, user_id):
+        query = "SELECT SUM(amount) FROM incomes WHERE user_id = ?"
+        result = await self._execute(query, (user_id,))
+        return result[0][0] if result and result[0][0] is not None else 0
+
+    async def add_expense(self, user_id, amount, category, date):
+        query = "INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)"
+        await self._execute(query, (user_id, amount, category, date))
+
+    async def delete_expense(self, user_id):
+        find_query ="SELECT id FROM expenses WHERE user_id = ? ORDER BY id DESC LIMIT 1"
+        last_id_row = await self._execute(find_query, (user_id,))
+        if last_id_row:
+            last_id = last_id_row[0][0]
+            await self._execute("DELETE FROM expenses WHERE id = ?", (last_id,))
             return True
         return False
 
-    def get_user_expenses(self, user_id):
-        # Команда SELECT для звіту
-        with self.connection:
-            return self.cursor.execute(
-                "SELECT amount, category, date FROM expenses WHERE user_id = ?",
-                (user_id,)
-            ).fetchall()
+    async def get_user_expenses(self, user_id):
+        query = "SELECT amount, category, date FROM expenses WHERE user_id = ?"
+        result = await self._execute(query, (user_id,))
+        return result
 
-    def get_total_spending(self, user_id):
-        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ?", (user_id,))
-        result = self.cursor.fetchone()
-        return result[0] if result[0] is not None else 0
+    async def get_total_spending(self, user_id):
+        query = "SELECT SUM(amount) FROM expenses WHERE user_id = ?"
+        result = await self._execute(query, (user_id,))
+        return result[0][0] if result and result[0][0] is not None else 0
 
-    def get_today_spending(self, user_id, date):
-        self.cursor.execute("SELECT SUM(amount) FROM expenses WHERE user_id = ? AND date = ?", (user_id, date))
-        result = self.cursor.fetchone()
-        return result[0] if result[0] is not None else 0
+    async def get_today_spending(self, user_id, date):
+        query = "SELECT SUM(amount) FROM expenses WHERE user_id = ? AND date = ?"
+        result = await self._execute(query, (user_id, date))
+        return result[0][0] if result and result[0][0] is not None else 0
 
 
-    def get_expenses_by_period(self, user_id, days):
+    async def get_expenses_by_period(self, user_id, days):
         query = f"SELECT amount, category, date FROM expenses WHERE user_id = ? AND date >= DATE('now', '-{days} days')"
-        self.cursor.execute(query,(user_id,))
-        return self.cursor.fetchall()
+        result = await self._execute(query,(user_id, days))
+        return result
 
-    def get_today_expenses(self, user_id):
+    async def get_today_expenses(self, user_id):
         query = f"SELECT amount, category, date FROM expenses WHERE user_id = ? AND date = date('now')"
-        self.cursor.execute(query,(user_id,))
-        return self.cursor.fetchall()
+        return await self._execute(query, (user_id,))
 
-    def get_expenses_by_category(self, user_id):
-        self.cursor.execute("""
+    async def get_expenses_by_category(self, user_id):
+        query ="""
         SELECT category, SUM(amount)
         FROM expenses
         WHERE user_id = ?
         GROUP BY category
-        ORDER BY SUM(amount) DESC""", (user_id,))
-        return self.cursor.fetchall()
+        ORDER BY SUM(amount) DESC"""
+        return await self._execute(query, (user_id,))
 
-    def get_all_expenses_for_export(self, user_id):
-        self.cursor.execute("SELECT amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC", (user_id,))
-        return self.cursor.fetchall()
+    async def get_all_expenses_for_export(self, user_id):
+        query = "SELECT amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC"
+        return await self._execute(query, (user_id,))
 
 
-    def get_weekly_stats(self, user_id):
+    async def get_weekly_stats(self, user_id):
         query = """SELECT date, SUM(amount)
         FROM expenses
         WHERE user_id = ? AND date >= DATE('now', '-7 days')
         GROUP BY date
         ORDER BY date ASC"""
-        self.cursor.execute(query, (user_id,))
-        return self.cursor.fetchall()
+        return await self._execute(query, (user_id,))
 
-    def create_settings_table(self):
+    async def create_settings_table(self):
         query = """CREATE TABLE IF NOT EXISTS settings (
         user_id INTEGER PRIMARY KEY,
         daily_limit REAL DEFAULT 500.0,
         monthly_limit REAL DEFAULT 5000.0)"""
-        self.cursor.execute(query)
+        return await self._execute(query)
 
-    def update_user_limit(self, user_id, daily=None, monthly=None):
+    async def update_user_limit(self, user_id, daily=None, monthly=None):
         if daily is not None:
             query = "INSERT INTO settings (user_id, daily_limit) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET daily_limit=?"
-            self.cursor.execute(query, (user_id, daily, daily))
+            return await self._execute(query, (user_id, daily, daily))
         if monthly is not None:
             query = "INSERT INTO settings (user_id, monthly_limit) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET monthly_limit=?"
-            self.cursor.execute(query, (user_id, monthly, monthly))
+            return await self._execute(query, (user_id, monthly, monthly))
 
-        self.connection.commit()
 
-    def get_user_settings(self, user_id):
-        self.cursor.execute("SELECT daily_limit, monthly_limit FROM settings WHERE user_id = ?", (user_id,))
-        result = self.cursor.fetchone()
+    async def get_user_settings(self, user_id):
+        query = "SELECT daily_limit, monthly_limit FROM settings WHERE user_id = ?"
+        result = await self._execute(query, (user_id,))
         if result:
-            return {"daily": result[0], "monthly": result[1]}
+            return {"daily": result[0][0], "monthly": result[0][1]}
         return {"daily": 500.0, "monthly": 5000.0}
 
-    def get_last_week(self, user_id):
+    async def get_last_week(self, user_id):
         query = ("SELECT SUM(amount) FROM expenses WHERE user_id = ? AND date BETWEEN DATE('now', '-14 days') AND DATE ('now', '-8 days')")
-        self.cursor.execute(query, (user_id,))
-        result = self.cursor.fetchone()
+        result = await self._execute(query, (user_id,))
         return result[0] if result[0] is not None else 0
 
-    def suggest_category(self,user_id, text):
+    async def suggest_category(self,user_id, text):
         query = ("SELECT category FROM expenses WHERE user_id = ? AND (category LIKE ? OR ? LIKE '%' || category || '%') ORDER BY id DESC LIMIT 1")
         search_text = f'%{text}%'
-        self.cursor.execute(query, (user_id, search_text, text))
-        result = self.cursor.fetchall()
-        return result[0] if result else None
-    def get_db_status(self):
-        self.cursor.execute("SELECT COUNT(*) FROM expenses")
-        count = self.cursor.fetchone()[0]
-        return count
+        await self._execute(query, (user_id,search_text, text))
+        return result[0][0] if result else None
+
+    async def get_db_status(self):
+        query = "SELECT COUNT(*) FROM expenses"
+        result = await self._execute(query)
+        return result[0][0] if result else 0
 
 
