@@ -9,12 +9,12 @@ templates = Jinja2Templates(directory="templates")
 db = Database("my_budget.db")
 
 @app.get("/")
-def home():
+async def home():
     return {"message": "Привітик, API працює"}
 
 @app.get("/expenses/{user_id}")
-def get_expenses(user_id: int):
-    raw_data = db.get_user_expenses(user_id)
+async def get_expenses(user_id: int):
+    raw_data = await db.get_user_expenses(user_id)
 
     formatted_data = []
     for row in raw_data:
@@ -30,8 +30,8 @@ def get_expenses(user_id: int):
         "expenses" : formatted_data
     }
 @app.get("/analytics/{user_id}")
-def get_analytics(user_id: int):
-    stats = db.get_expenses_by_category(user_id)
+async def get_analytics(user_id: int):
+    stats = await db.get_expenses_by_category(user_id)
     breakdown = {category: amount for category, amount in stats}
     return {
         "status": "success",
@@ -40,10 +40,10 @@ def get_analytics(user_id: int):
     }
 
 @app.get("/dashboard/{user_id}", response_class=HTMLResponse)
-def get_dashboard(request: Request, user_id: int):
-    raw_data = db.get_user_expenses(user_id)
+async def get_dashboard(request: Request, user_id: int):
+    raw_data = await db.get_user_expenses(user_id)
     total_sum = sum([row[0] for row in raw_data])
-    cat_stats = db.get_expenses_by_category(user_id)
+    cat_stats = await db.get_expenses_by_category(user_id)
     labels = [row[0] for row in cat_stats]
     values = [row[1] for row in cat_stats]
     count = len(raw_data)

@@ -1,3 +1,8 @@
+from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_storage import StateMemoryStorage
+from states import ExpenseState, IncomeState, SettingsState
+from telebot import types
+from telebot import asyncio_filters
 import keyboards
 import functools
 import currency
@@ -5,13 +10,13 @@ import platform
 import os
 import signal
 from dotenv import load_dotenv
-import telebot
+import asyncio
 import reports
 from database import Database
 from datetime import datetime
 import logging
 from bot_service import BotService
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 logging.basicConfig(
 level=logging.INFO,
 filename='bot.log',
@@ -24,8 +29,11 @@ class Config:
     MONTHLY_LIMIT = 5000
     DB_NAME = "my_budget.db"
     PRIMARY_CURRENCY = os.getenv("CURRENCY_PRIMARY", "EUR")
+state_storage = StateMemoryStorage()
+bot = AsyncTeleBot(Config.TOKEN, state_storage=state_storage)
+bot.add_custom_filter(asyncio_filters.StateFilter(bot))
 db = Database(Config.DB_NAME)
-bot = telebot.TeleBot(Config.TOKEN)
+scheduler = AsyncIOScheduler()
 
 class Validator:
     @staticmethod
@@ -41,11 +49,11 @@ class Validator:
             return None, "Будь ласка, введи суму цифрами (наприклад: 105.45)"
 
 
-def send_weekly_report():
+async def send_weekly_report():
     user_id = 5096558702
-    current_week_data = db.get_weekly_stats(user_id)
+    current_week_data = await db.get_weekly_stats(user_id)
     current_week_total = sum(row[1] for row in current_week_data) if current_week_data else 0
-    last_week_total = db.get_last_week(user_id)
+    last_week_total = await db.get_last_week(user_id)
 
     if current_week_total == 0 and last_week_total == 0:
         return
@@ -71,24 +79,24 @@ def send_weekly_report():
         f"{trend}\n\n"
         f"Детальніше на [Дашборді](http://127.0.0.1:8001/dashboard/{user_id})"
         )
-    bot.send_message(user_id, report_text, parse_mode="Markdown")
+    await bot.send_message(user_id, report_text, parse_mode="Markdown")
 
 
 
 def log_action(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         print(f"--- [LOG] Виклик функції: {func.__name__} ---")
-        result = func(*args, **kwargs)
+        result = await func(*args, **kwargs)
         print(f"--- [LOG] Функція {func.__name__} завершена ---")
         return result
     return wrapper
 
 def error_handler(func):
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         try:
-            return func(*args, **kwargs)
+            return await func(*args, **kwargs)
         except Exception as e:
             error_msg = (f"*Критична помилка:*\n\n"
             f"📌 *Функція:* `{func.__name__}`\n"
@@ -99,7 +107,7 @@ def error_handler(func):
             print(f"[ERROR] {error_msg}")
 
         try:
-            bot.send_message(5096558702, error_msg, parse_mode="Markdown")
+            await bot.send_message(5096558702, error_msg, parse_mode="Markdown")
         except Exception as bot_error:
             print(f"Навіть повідомлення про помилку не відправилось: {bot_error}")
             return None
@@ -109,164 +117,179 @@ def error_handler(func):
 @bot.message_handler(commands=['start'])
 @log_action
 @error_handler
-def start_command(message):
-    BotService.send_welcome(bot, message.chat.id)
+async def start_command(message):
+    await BotService.send_welcome(bot, message.chat.id)
 
 
 @bot.message_handler(func=lambda message: message.text == "Видалити останню")
 @log_action
-def delete(message):
+async def delete(message):
     markup = keyboards.get_delete_confirmation_menu()
-    bot.send_message(message.chat.id, "Ви точно хочете видалити останній запис?", reply_markup = markup)
+    await bot.send_message(message.chat.id, "Ви точно хочете видалити останній запис?", reply_markup = markup)
 
 @bot.message_handler(func=lambda message: message.text == "Додати витрату")
 @log_action
 @error_handler
-def ask_for_amount(message):
-    user_id = message.chat.id
-    msg = BotService.ask_amount(bot, user_id)
-    bot.register_next_step_handler(msg, get_amount)
+async def ask_for_amount(message):
+    await bot.set_state(message.from_user.id, ExpenseState.amount, message.chat.id)
+    await BotService.ask_amount(bot, message.chat.id)
 
-def get_amount(message):
+@bot.message_handler(state=ExpenseState.amount)
+async def get_amount(message):
     text_parts = message.text.split()
-    search_term = text_parts[1] if len(text_parts) > 1 else message.text
-    suggested = db.suggest_category(message.chat.id, search_term)
     amount, error_msg = Validator.parse_amount(text_parts[0])
 
     if error_msg:
-        bot.send_message(message.chat.id, error_msg)
+        await bot.send_message(message.chat.id, error_msg)
         return
-    markup = keyboards.get_categories_menu()
 
+    async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        data["amount"] = amount
+    await bot.set_state(message.from_user.id, ExpenseState.category, message.chat.id)
+    search_term = text_parts[1] if len(text_parts) > 1 else ""
+    suggested = await db.suggest_category(message.chat.id, search_term) if search_term else None
+
+    markup = keyboards.get_categories_menu()
     display_text = "Обери категорію:"
     if suggested:
         display_text = f"Я думаю це **{suggested}**. Правильно? Чи обери іншу:"
 
-    msg = bot.send_message(message.chat.id, display_text, reply_markup = markup, parse_mode="Markdown")
-    bot.register_next_step_handler(msg, lambda m: save_all_data(m, amount))
+    await bot.send_message(message.chat.id, display_text, reply_markup = markup, parse_mode="Markdown")
 
-
-def save_all_data(message, amount):
+@bot.message_handler(state=ExpenseState.category)
+async def save_all_data(message):
+    async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        amount = data.get("amount")
     category = message.text
     user_id = message.chat.id
-
     current_date = datetime.now().strftime("%Y-%m-%d")
 
-    db.add_expense(message.chat.id, amount, category, current_date)
+    await db.add_expense(user_id, amount, category, current_date)
+    await bot.delete_state(message.from_user.id, message.chat.id)
+    today_total = await db.get_today_spending(user_id, current_date)
+    total_spent = await db.get_total_spending(user_id)
 
     text = f"Збережено: {amount} грн, на '{category}'"
-    today_total = db.get_today_spending(user_id, current_date)
     if today_total > Config.DAILY_LIMIT:
         text += f"\n\n*Увага! Ти перевищила денний ліміт!\nСьогодні витрачено: *{today_total}* грн*"
-    total_spent = db.get_total_spending(user_id)
+
     if total_spent > Config.MONTHLY_LIMIT:
         text += f"\n\n*ГЛОБАЛЬНИЙ ЛІМІТ!*\nЗагальна сума: {total_spent} грн.\nПора зупинитися!"
-    BotService.send_report(bot, user_id, text)
-
+    await BotService.send_report(bot, user_id, text)
 
 @bot.message_handler(func=lambda message: message.text == "Мої витрати")
 @log_action
-def show_menu(message):
+async def show_menu(message):
     markup = keyboards.get_period_menu()
-    bot.send_message(message.chat.id, "За який період показати звіт?", reply_markup = markup)
+    await bot.send_message(message.chat.id, "За який період показати звіт?", reply_markup = markup)
 
 
 @bot.message_handler(func=lambda message: message.text == "Сьогодні")
 @log_action
-def show_daily(message):
-    data = db.get_today_expenses(message.chat.id)
+async def show_daily(message):
+    data = await db.get_today_expenses(message.chat.id)
     text = reports.format_expense_report(data, "сьогодні")
-    BotService.send_report(bot, message.chat.id, text)
+    await BotService.send_report(bot, message.chat.id, text)
 
 
 
 @bot.message_handler(func=lambda message: message.text == "Тиждень")
 @log_action
-def show_weekly(message):
-    data = db.get_expenses_by_period(message.chat.id, 7)
+async def show_weekly(message):
+    data = await db.get_expenses_by_period(message.chat.id, 7)
     text = reports.format_expense_report(data, "тиждень")
 
-    data_stats = db.get_weekly_stats(message.chat.id)
+    data_stats = await db.get_weekly_stats(message.chat.id)
     chart_path = reports.create_weekly_chart(data_stats, message.chat.id)
 
-    BotService.send_report(bot, message.chat.id, text, chart_path)
+    await BotService.send_report(bot, message.chat.id, text, chart_path)
 
 
 @bot.message_handler(func=lambda message: message.text == "Місяць")
 @log_action
-def show_monthly(message):
-    data = db.get_expenses_by_period(message.chat.id, 30)
+async def show_monthly(message):
+    data = await db.get_expenses_by_period(message.chat.id, 30)
     text = reports.format_expense_report(data, "місяць")
 
-    BotService.send_report(bot, message.chat.id, text)
+    await BotService.send_report(bot, message.chat.id, text)
 
 
 @bot.message_handler(func=lambda message: message.text == "Назад")
 @log_action
-def back(message):
-    BotService.send_welcome(bot, message.chat.id)
+async def back(message):
+    await BotService.send_welcome(bot, message.chat.id)
 
 
 @bot.message_handler(func=lambda message: message.text == "Статистика")
 @log_action
-def show_stats(message):
-    stats = db.get_expenses_by_category(message.chat.id)
+async def show_stats(message):
+    stats = await db.get_expenses_by_category(message.chat.id)
     chart_path = reports.create_stats_chart(stats, message.chat.id)
 
     if not stats:
-        bot.send_message(message.chat.id, "Даних для статистики поки немає.")
+        await bot.send_message(message.chat.id, "Даних для статистики поки немає.")
     else:
         report = "*Витрати по категоріям:*\n"
         report += "\n".join([f"- {r[0]} | *{r[1]} грн*" for r in stats])
-        BotService.send_report(bot, message.chat.id, report, chart_path)
+        await BotService.send_report(bot, message.chat.id, report, chart_path)
 
 
 @bot.message_handler(func=lambda message: message.text == "Експорт в Excel")
 @log_action
 @error_handler
-def export_to_excel(message):
-    data = db.get_all_expenses_for_export(message.chat.id)
+async def export_to_excel(message):
+    data = await db.get_all_expenses_for_export(message.chat.id)
     file_path = reports.create_excel_report(data, message.chat.id)
     if file_path:
         with open(file_path, 'rb') as file:
-            bot.send_document(message.chat.id, file, caption="Твій повний звіт у Excel")
+            await bot.send_document(message.chat.id, file, caption="Твій повний звіт у Excel")
 
         os.remove(file_path)
     else:
-        bot.send_message(message.chat.id, "У базі поки немає даних для експорту.")
+        await bot.send_message(message.chat.id, "У базі поки немає даних для експорту.")
 
 
 @bot.message_handler(func=lambda message: message.text == "Додати дохід")
 @log_action
-def ask_income(message):
-    msg = bot.send_message(message.chat.id, "Ввести суму доходу:")
-    bot.register_next_step_handler(msg, get_income_amount)
+async def ask_income(message):
+    await bot.send_message(message.chat.id, "Ввести суму доходу:")
+    await bot.set_state(message.from_user.id, IncomeState.amount, message.chat.id)
 
-def get_income_amount(message):
+@bot.message_handler(state=IncomeState.amount)
+async def get_income_amount(message):
     amount, error_msg = Validator.parse_amount(message.text)
     if error_msg:
-        bot.send_message(message.chat.id, error_msg)
+        await bot.send_message(message.chat.id, error_msg)
         return
+    async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        data["amount"] = amount
 
+    await bot.set_state(message.from_user.id, IncomeState.category, message.chat.id)
     markup = keyboards.get_incomes_categories_menu()
-    msg = bot.send_message(message.chat.id, "Обери джерело:", reply_markup = markup)
-    bot.register_next_step_handler(msg, lambda m: save_income(m, amount))
+    await bot.send_message(message.chat.id, "Обери джерело:", reply_markup = markup)
 
 
-def save_income(message, amount):
+@bot.message_handler(state=IncomeState.category)
+async def save_income(message):
+    async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        amount = data.get("amount")
+    user_id = message.chat.id
     category = message.text
     current_date = datetime.now().strftime("%Y/%m/%d")
-    db.add_income(message.chat.id, amount, category, current_date)
-    bot.send_message(message.chat.id, f"Записано +{amount} грн ({category})", reply_markup=keyboards.get_main_menu())
+
+    await db.add_income(user_id, amount, category, current_date)
+    await bot.delete_state(message.from_user.id, message.chat.id)
+
+    await bot.send_message(user_id, f"Записано +{amount} грн ({category})", reply_markup=keyboards.get_main_menu())
 
 
 @bot.message_handler(func=lambda message: message.text == "Загальний баланс")
 @log_action
 @error_handler
-def total_balance(message):
+async def total_balance(message):
     user_id = message.chat.id
-    total_income = db.get_total_income(message.chat.id)
-    total_expenses = db.get_total_spending(message.chat.id)
+    total_income = await db.get_total_income(message.chat.id)
+    total_expenses = await db.get_total_spending(message.chat.id)
     chart_path = reports.create_balance_chart(total_income, total_expenses, user_id)
     balance_uah = total_income - total_expenses
 
@@ -286,7 +309,7 @@ def total_balance(message):
 
     inline_markup = keyboards.get_balance_inline()
     with open(chart_path, 'rb') as photo:
-        bot.send_photo(message.chat.id, photo, caption=report, parse_mode="Markdown", reply_markup=inline_markup)
+        await bot.send_photo(message.chat.id, photo, caption=report, parse_mode="Markdown", reply_markup=inline_markup)
     import os
     os.remove(chart_path)
 
@@ -294,7 +317,7 @@ def total_balance(message):
 @bot.message_handler(commands=["rate"])
 @error_handler
 @log_action
-def show_rate(message):
+async def show_rate(message):
     eur_rate = currency.get_exchange_rate("EUR")
     usd_rate = currency.get_exchange_rate("USD")
 
@@ -302,69 +325,74 @@ def show_rate(message):
         text = (f"*Актуальний курс НБУ:*\n\n"
                 f"🇪🇺 Євро:* {eur_rate} грн*\n"
                 f"🇺🇸 Долар:* {usd_rate} грн*\n")
-        bot.send_message(message.chat.id, text, parse_mode="Markdown")
+        await bot.send_message(message.chat.id, text, parse_mode="Markdown")
 
     else:
-        bot.send_message(message.chat.id, "Не вдалося отримати курс. Спробуй пізніше.", parse_mode="Markdown")
+        await bot.send_message(message.chat.id, "Не вдалося отримати курс. Спробуй пізніше.", parse_mode="Markdown")
 
 
 @bot.callback_query_handler(func=lambda call: True)
 @log_action
-def handle_all_callbacks(call):
+async def handle_all_callbacks(call):
     user_id = call.message.chat.id
 
     if call.data == "refresh_balance":
-        bot.answer_callback_query(call.id, text="Оновлюю данні...")
-        total_balance(call.message)
+        await bot.answer_callback_query(call.id, text="Оновлюю данні...")
+        await total_balance(call.message)
 
     elif call.data == "confirm_delete":
 
-        success = db.delete_expense(call.message.chat.id)
+        success = await db.delete_expense(call.message.chat.id)
         if success:
             new_text = "Видалено останній запис!"
         else:
             new_text = "Не вдалось знайти записів для видалення."
 
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=new_text)
+        await bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=new_text)
 
     elif call.data == "cancel_confirm":
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text= "Видалення скасовано.")
+        await bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text= "Видалення скасовано.")
 
     elif call.data == "set_daily":
-        bot.answer_callback_query(call.id)
-        msg = bot.send_message(user_id, "Введіть новий *денний* ліміт (цифрами):", parse_mode="Markdown")
-        bot.register_next_step_handler(msg, process_daily_limit_step)
+        await bot.answer_callback_query(call.id)
+        await bot.send_message(user_id, "Введіть новий *денний* ліміт (цифрами):", parse_mode="Markdown")
+        await bot.set_state(user_id, SettingsState.daily_limit, user_id)
 
     elif call.data == "set_monthly":
-        bot.answer_callback_query(call.id)
-        msg = bot.send_message(user_id, "Введіть новий *місячний* ліміт (цифрами):", parse_mode="Markdown")
-        bot.register_next_step_handler(msg, process_monthly_limit_step)
+        await bot.answer_callback_query(call.id)
+        await bot.send_message(user_id, "Введіть новий *місячний* ліміт (цифрами):", parse_mode="Markdown")
+        await bot.set_state(user_id, SettingsState.monthly_limit, user_id)
 
-    bot.answer_callback_query(call.id)
+    await bot.answer_callback_query(call.id)
 
-def process_daily_limit_step(message):
+@bot.message_handler(state=SettingsState.daily_limit)
+async def process_daily_limit_step(message):
     try:
         new_limit = float(message.text)
         user_id = message.chat.id
-        db.update_user_limit(user_id, daily = new_limit)
-        bot.send_message(user_id, f"Денний ліміт оновлено до {new_limit}!")
+        await db.update_user_limit(user_id, daily = new_limit)
+        await bot.send_message(user_id, f"Денний ліміт оновлено до {new_limit}!")
     except ValueError:
-        bot.send_message(message.chat.id, "Помилка! Введіть число (наприклад, 600). Спробуйте ще раз /settings")
+        await bot.send_message(message.chat.id, "Помилка! Введіть число (наприклад, 600). Спробуйте ще раз /settings")
+    finally:
+        await bot.delete_message(message.from_user.id, message.chat.id)
 
-def process_monthly_limit_step(message):
+@bot.message_handler(state=SettingsState.monthly_limit)
+async def process_monthly_limit_step(message):
     try:
         new_limit = float(message.text)
         user_id = message.chat.id
-        db.update_user_limit(user_id, monthly = new_limit)
-        bot.send_message(user_id, f"Місячний ліміт оновлено до {new_limit}!")
+        await db.update_user_limit(user_id, monthly = new_limit)
+        await bot.send_message(user_id, f"Місячний ліміт оновлено до {new_limit}!")
     except ValueError:
-        bot.send_message(message.chat.id, "Помилка! Введіть число. Спробуйте ще раз /settings")
-
+        await bot.send_message(message.chat.id, "Помилка! Введіть число. Спробуйте ще раз /settings")
+    finally:
+        await bot.delete_message(message.from_user.id, message.chat.id)
 
 @bot.message_handler(commands=['settings'])
-def show_settings(message):
+async def show_settings(message):
     user_id = message.chat.id
-    settings = db.get_user_settings(user_id)
+    settings = await db.get_user_settings(user_id)
 
     daily = settings["daily"]
     monthly = settings["monthly"]
@@ -376,21 +404,26 @@ def show_settings(message):
         "Що саме хочеш змінити?"
     )
 
-    markup = telebot.types.InlineKeyboardMarkup()
-    btn_daily = telebot.types.InlineKeyboardButton("Змінити денний ліміт", callback_data="set_daily")
-    btn_monthly = telebot.types.InlineKeyboardButton("Змінити місячний ліміт", callback_data="set_monthly")
+    markup = types.InlineKeyboardMarkup()
+    btn_daily = types.InlineKeyboardButton("Змінити денний ліміт", callback_data="set_daily")
+    btn_monthly = types.InlineKeyboardButton("Змінити місячний ліміт", callback_data="set_monthly")
     markup.add(btn_daily, btn_monthly)
 
 
-    bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
+    await bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
+
+@bot.message_handler(commands=['about'])
+async def show_about(message):
+    await bot.send_message(message.chat.id, "Я бекенд проект")
+
 
 @bot.message_handler(commands=['status'])
 @error_handler
-def system_status(message):
+async def system_status(message):
     if message.chat.id != 5096558702:
-        bot.send_message(message.chat.id, "У вас немає доступу до цієї команди")
+        await bot.send_message(message.chat.id, "У вас немає доступу до цієї команди")
         return
-    db_count = db.get_db_status()
+    db_count = await db.get_db_status()
     py_version = platform.python_version()
     os_info = platform.system()
     status_text = (
@@ -402,7 +435,7 @@ def system_status(message):
         f"*ОС:* `{os_info}`\n"
         f"*Час сервера:* `{datetime.now().strftime('%H:%M:%S')}`"
     )
-    bot.send_message(message.chat.id, status_text, parse_mode="Markdown")
+    await bot.send_message(message.chat.id, status_text, parse_mode="Markdown")
 
 
 def signal_handler(_signal, _frame):
@@ -412,9 +445,16 @@ def signal_handler(_signal, _frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
+async def main():
+    await db.init_db()
+    scheduler.add_job(send_weekly_report,'cron', day_of_week='mon', hour=9, minute=0)
+    scheduler.start()
+    print("Асинхронний бот запущений!")
+    await bot.infinity_polling()
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(send_weekly_report,'cron', day_of_week='mon', hour=9, minute=0)
-scheduler.start()
 if __name__ == "__main__":
-    bot.infinity_polling()
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Бот зупинений")
+

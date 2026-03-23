@@ -1,17 +1,32 @@
-import threading
+import asyncio
 import uvicorn
-from main import bot
-from api import app
+from main import main as run_bot_logic
+from api import app as fastapi_app
 
-def run_bot():
-    print("Бот запускається...")
-    bot.infinity_polling()
 
-def run_api():
-    print("API запускається...")
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+async def run_api():
+    config = uvicorn.Config(fastapi_app, host="127.0.0.1", port=8001, log_level="info")
+    server = uvicorn.Server(config)
+    await server.serve()
+
+async def start_everything():
+    print("Запускаємо Бот та API")
+    await asyncio.gather(
+        run_bot_logic(),
+        run_api()
+    )
+
 
 if __name__ == "__main__":
-    bot.thread = threading.Thread(target=run_bot, daemon=True)
-    bot.thread.start()
-    run_api()
+    try:
+        asyncio.run(start_everything())
+    except KeyboardInterrupt:
+        print("\nПроцеси зупинено користувачем.")
+
+
+
+
+
+
+
+
