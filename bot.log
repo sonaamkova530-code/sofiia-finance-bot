@@ -50900,3 +50900,48 @@ requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetErro
 2026-04-03 15:59:43,614 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
 2026-04-03 15:59:43,615 - INFO - Added job "send_weekly_report" to job store "default"
 2026-04-03 15:59:43,615 - INFO - Scheduler started
+2026-04-03 16:03:26,741 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-03 16:03:26,742 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-03 16:03:26,742 - INFO - Scheduler started
+2026-04-03 16:03:38,530 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-03 16:03:38,531 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-03 16:03:38,531 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-03 16:03:38,617 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-03 16:03:38,641 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-03 16:06:02,983 - ERROR - 'AsyncTeleBot' object has no attribute 'register_next_step_handler'
+2026-04-03 16:06:05,149 - ERROR - 'AsyncTeleBot' object has no attribute 'register_next_step_handler'
+2026-04-03 16:29:40,958 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-03 16:29:40,959 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-03 16:29:40,959 - INFO - Scheduler started
+2026-04-05 12:48:55,127 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 12:48:55,129 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 12:48:55,129 - INFO - Scheduler started
+2026-04-05 12:49:34,889 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 12:49:34,890 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 12:49:34,890 - INFO - Scheduler started
+2026-04-05 12:52:58,442 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 12:52:58,443 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 12:52:58,443 - INFO - Scheduler started
+2026-04-05 12:53:01,622 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 12:53:01,623 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 12:53:01,623 - INFO - Scheduler started
+2026-04-05 12:53:09,715 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-05 12:53:09,717 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-05 12:53:09,719 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-05 12:53:09,815 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-05 12:53:09,815 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-05 12:53:09,918 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-05 12:53:09,919 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-04-05 12:53:46,996 - ERROR - 'Message' object has no attribute 'data'
+2026-04-05 13:07:04,236 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 13:07:04,237 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 13:07:04,237 - INFO - Scheduler started
+2026-04-05 13:11:53,365 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 13:11:53,367 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 13:11:53,367 - INFO - Scheduler started
+2026-04-05 13:13:31,508 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 13:13:31,509 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 13:13:31,510 - INFO - Scheduler started
+2026-04-05 13:14:09,702 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 13:14:09,703 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 13:14:09,703 - INFO - Scheduler started

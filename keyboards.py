@@ -11,7 +11,7 @@ def get_main_menu():
     markup.row("Додати витрату", "Додати дохід")
     markup.row("Мої витрати", "Статистика")
     markup.row("Експорт в Excel", "Загальний баланс")
-    markup.row("Видалити останню")
+    markup.row("Видалити останню", "Історія")
     return markup
 
 def get_categories_menu():
@@ -28,6 +28,20 @@ def get_balance_inline():
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("Оновити курс", callback_data="refresh_balance"))
     return markup
+
+def get_pagination_keyboard(current_page, total_pages):
+    markup = InlineKeyboardMarkup()
+    buttons = []
+    if current_page > 1:
+        buttons.append(InlineKeyboardButton("Назад", callback_data=f"page_{current_page - 1}"))
+
+    if current_page < total_pages:
+        buttons.append(InlineKeyboardButton("Вперед", callback_data=f"page_{current_page + 1}"))
+
+    if buttons:
+        markup.add(*buttons)
+    return markup
+
 
 def get_delete_confirmation_menu():
     markup = InlineKeyboardMarkup()

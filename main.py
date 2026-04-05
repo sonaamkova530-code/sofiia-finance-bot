@@ -8,6 +8,7 @@ import functools
 import currency
 import platform
 import os
+import math
 import signal
 from dotenv import load_dotenv
 import asyncio
@@ -313,6 +314,38 @@ async def total_balance(message):
     import os
     os.remove(chart_path)
 
+@bot.message_handler(func=lambda message: message.text == "Історія")
+@log_action
+@error_handler
+async def show_history_first_page(message):
+    await send_history_page(message.chat.id, page=1)
+
+async def send_history_page(chat_id, page, message_id=None):
+    limit = 5
+    offset = (page - 1) * limit
+    total_count = await db.get_expenses_count(chat_id)
+    if total_count == 0:
+        text = "Записів ще немає."
+        if message_id:
+            await bot.edit_message_text(text, chat_id=chat_id, message_id=message_id)
+        else:
+            await bot.send_message(chat_id, text)
+        return
+
+    total_pages = math.ceil(total_count / limit)
+    records = await db.get_expenses_page(chat_id, limit, offset)
+
+    text = f"*Історія витрат (Сторінка {page} з {total_pages})*\n\n"
+    for amount, category, date in records:
+        text += f"{date}: *{amount} грн* - {category}\n"
+
+    markup = keyboards.get_pagination_keyboard(page, total_pages)
+
+    if message_id:
+        await bot.edit_message_text(text, chat_id=chat_id, message_id=message_id, reply_markup=markup, parse_mode="Markdown")
+    else:
+        await bot.send_message(chat_id, text, reply_markup=markup, parse_mode="Markdown")
+
 
 @bot.message_handler(commands=["rate"])
 @error_handler
@@ -335,7 +368,6 @@ async def show_rate(message):
 @log_action
 async def handle_all_callbacks(call):
     user_id = call.message.chat.id
-
     if call.data == "refresh_balance":
         await bot.answer_callback_query(call.id, text="Оновлюю данні...")
         await total_balance(call.message)
@@ -362,6 +394,11 @@ async def handle_all_callbacks(call):
         await bot.answer_callback_query(call.id)
         await bot.send_message(user_id, "Введіть новий *місячний* ліміт (цифрами):", parse_mode="Markdown")
         await bot.set_state(user_id, SettingsState.monthly_limit, user_id)
+
+    elif call.data.startswith("page_"):
+        page = int(call.data.split("_")[1])
+        await send_history_page(call.message.chat.id, page, call.message.message_id)
+        await bot.answer_callback_query(call.id)
 
     await bot.answer_callback_query(call.id)
 

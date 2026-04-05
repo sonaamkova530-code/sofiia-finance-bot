@@ -131,3 +131,18 @@ class Database:
     async def get_db_status(self):
         result = await self._execute("SELECT COUNT(*) FROM expenses")
         return result[0][0] if result else 0
+
+    async def get_expenses_count(self, user_id):
+        query = "SELECT COUNT(*) FROM expenses WHERE user_id = ?"
+        result = await self._execute(query, (user_id,))
+        return result[0][0] if result else 0
+
+    async def get_expenses_page(self, user_id, limit, offset):
+        query = "SELECT amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC LIMIT ? OFFSET ?"
+        return await self._execute(query, (user_id, limit, offset))
+
+
+
+
+
+
