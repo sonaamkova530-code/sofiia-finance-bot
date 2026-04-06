@@ -1,6 +1,7 @@
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_storage import StateMemoryStorage
 from states import ExpenseState, IncomeState, SettingsState
+from middlewares import AntispamMiddleware
 from telebot import types
 from telebot import asyncio_filters
 import keyboards
@@ -33,6 +34,7 @@ class Config:
     PRIMARY_CURRENCY = os.getenv("CURRENCY_PRIMARY", "EUR")
 state_storage = StateMemoryStorage()
 bot = AsyncTeleBot(Config.TOKEN, state_storage=state_storage)
+bot.setup_middleware(AntispamMiddleware(limit=1.5))
 bot.add_custom_filter(asyncio_filters.StateFilter(bot))
 db = Database(Config.DB_NAME)
 scheduler = AsyncIOScheduler()
