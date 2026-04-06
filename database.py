@@ -36,6 +36,11 @@ class Database:
                     monthly_limit REAL DEFAULT 5000.0,
                     primary_currency TEXT DEFAULT 'UAH')
             """)
+            await db.execute("""
+                CREATE TABLE IF NOT EXISTS auth_tokens (
+                    user_id INTEGER PRIMARY KEY,
+                    token TEXT)
+            """)
             await db.commit()
 
 
@@ -141,6 +146,13 @@ class Database:
         query = "SELECT amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC LIMIT ? OFFSET ?"
         return await self._execute(query, (user_id, limit, offset))
 
+    async def save_token(self, user_id, token):
+        query = "INSERT INTO auth_tokens (user_id, token) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET token = ?"
+        await self._execute(query, (user_id, token, token))
+
+    async def get_token(self, user_id):
+        result = await self._execute("SELECT token FROM auth_tokens WHERE user_id = ?", (user_id,))
+        return result[0][0] if result else None
 
 
 

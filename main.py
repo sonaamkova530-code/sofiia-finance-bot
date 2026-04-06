@@ -4,6 +4,7 @@ from states import ExpenseState, IncomeState, SettingsState
 from telebot import types
 from telebot import asyncio_filters
 import keyboards
+import secrets
 import functools
 import currency
 import platform
@@ -473,6 +474,23 @@ async def system_status(message):
         f"*Час сервера:* `{datetime.now().strftime('%H:%M:%S')}`"
     )
     await bot.send_message(message.chat.id, status_text, parse_mode="Markdown")
+
+@bot.message_handler(commands=['dashboard'])
+@error_handler
+@log_action
+async def send_magic_link(message):
+    user_id = message.chat.id
+    new_token = secrets.token_urlsafe(16)
+    await db.save_token(user_id, new_token)
+    magic_link = f"http://127.0.0.1:8001/dashboard/{user_id}?token={new_token}"
+    text = (
+        f"*Сейф відкрито*\n\n"
+        f"Ось твоє персональне посилання на дашборд. "
+        f"Воно дійсне, поки ти не згенеруєш нове.\n\n"
+        f"[Перейти до Дашборду]({magic_link})"
+    )
+    await bot.send_message(message.chat.id, text, parse_mode="Markdown", disable_web_page_preview=True)
+
 
 
 def signal_handler(_signal, _frame):

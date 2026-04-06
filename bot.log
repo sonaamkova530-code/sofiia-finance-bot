@@ -50945,3 +50945,25 @@ requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetErro
 2026-04-05 13:14:09,702 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
 2026-04-05 13:14:09,703 - INFO - Added job "send_weekly_report" to job store "default"
 2026-04-05 13:14:09,703 - INFO - Scheduler started
+2026-04-05 13:16:29,976 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-05 13:16:29,977 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-05 13:16:29,977 - INFO - Scheduler started
+2026-04-05 18:20:32,536 - ERROR - Unknown error: TimeoutError
+2026-04-05 18:20:32,537 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A70C7922E0> files=None request_timeout=300
+2026-04-05 18:20:34,132 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-05 18:20:34,132 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A70C7926D0> files=None request_timeout=300
+2026-04-05 18:20:34,637 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-05 18:20:34,637 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A70C792660> files=None request_timeout=300
+2026-04-05 18:20:35,642 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-05 18:20:35,643 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A70C792740> files=None request_timeout=300
+2026-04-05 18:20:37,660 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-05 18:20:37,661 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A70C7927B0> files=None request_timeout=300
+2026-04-06 15:07:35,502 - ERROR - Unknown error: TimeoutError
+2026-04-06 15:07:35,502 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A70C8E7EE0> files=None request_timeout=300
+2026-04-06 15:07:35,509 - WARNING - Run time of job "send_weekly_report (trigger: cron[day_of_week='mon', hour='9', minute='0'], next run at: 2026-04-13 09:00:00 EEST)" was missed by 6:07:35.509336
+2026-04-06 15:51:48,428 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-06 15:51:48,429 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-06 15:51:48,429 - INFO - Scheduler started
+2026-04-06 15:54:24,807 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-06 15:54:24,808 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-06 15:54:24,808 - INFO - Scheduler started

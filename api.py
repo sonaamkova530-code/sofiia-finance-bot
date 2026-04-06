@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from database import Database
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
-
+from fastapi import Request, HTTPException
 app = FastAPI(title="Budget Bot API")
 templates = Jinja2Templates(directory="templates")
 db = Database("my_budget.db")
@@ -40,7 +39,11 @@ async def get_analytics(user_id: int):
     }
 
 @app.get("/dashboard/{user_id}", response_class=HTMLResponse)
-async def get_dashboard(request: Request, user_id: int):
+async def get_dashboard(request: Request, user_id: int, token: str = None):
+    valid_token = await db.get_token(user_id)
+    if not token or token != valid_token:
+        raise HTTPException(status_code=403, detail="Доступ заборонено! Згенеруй нове посилання через бота.")
+
     raw_data = await db.get_user_expenses(user_id)
     total_sum = sum([row[0] for row in raw_data])
     cat_stats = await db.get_expenses_by_category(user_id)
