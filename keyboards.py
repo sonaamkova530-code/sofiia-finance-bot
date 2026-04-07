@@ -29,8 +29,15 @@ def get_balance_inline():
     markup.add(InlineKeyboardButton("Оновити курс", callback_data="refresh_balance"))
     return markup
 
-def get_pagination_keyboard(current_page, total_pages):
+def get_history_keyboard(current_page, total_pages, records):
     markup = InlineKeyboardMarkup()
+
+    for index, record in enumerate(records, start=1):
+        record_id = record[0]
+
+        btn_del = InlineKeyboardButton(f"Видалити №{index}", callback_data=f"del_exp_{record_id}_{current_page}")
+        markup.add(btn_del)
+
     buttons = []
     if current_page > 1:
         buttons.append(InlineKeyboardButton("Назад", callback_data=f"page_{current_page - 1}"))

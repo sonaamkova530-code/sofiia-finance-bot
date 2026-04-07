@@ -143,7 +143,7 @@ class Database:
         return result[0][0] if result else 0
 
     async def get_expenses_page(self, user_id, limit, offset):
-        query = "SELECT amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC LIMIT ? OFFSET ?"
+        query = "SELECT id, amount, category, date FROM expenses WHERE user_id = ? ORDER BY date DESC ,id DESC LIMIT ? OFFSET ?"
         return await self._execute(query, (user_id, limit, offset))
 
     async def save_token(self, user_id, token):
@@ -153,6 +153,10 @@ class Database:
     async def get_token(self, user_id):
         result = await self._execute("SELECT token FROM auth_tokens WHERE user_id = ?", (user_id,))
         return result[0][0] if result else None
+
+    async def delete_expense_by_id(self, record_id, user_id):
+        query = "DELETE FROM expenses WHERE id = ? AND user_id = ?"
+        await self._execute(query, (record_id, user_id))
 
 
 

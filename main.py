@@ -339,10 +339,11 @@ async def send_history_page(chat_id, page, message_id=None):
     records = await db.get_expenses_page(chat_id, limit, offset)
 
     text = f"*Історія витрат (Сторінка {page} з {total_pages})*\n\n"
-    for amount, category, date in records:
-        text += f"{date}: *{amount} грн* - {category}\n"
+    for index, record in enumerate(records, start=1):
+        record_id, amount, category, date = record
+        text += f"{index}.* {date}: *{amount}* грн* - {category}\n"
 
-    markup = keyboards.get_pagination_keyboard(page, total_pages)
+    markup = keyboards.get_history_keyboard(page, total_pages, records)
 
     if message_id:
         await bot.edit_message_text(text, chat_id=chat_id, message_id=message_id, reply_markup=markup, parse_mode="Markdown")
@@ -402,6 +403,16 @@ async def handle_all_callbacks(call):
         page = int(call.data.split("_")[1])
         await send_history_page(call.message.chat.id, page, call.message.message_id)
         await bot.answer_callback_query(call.id)
+
+    elif call.data.startswith("del_exp_"):
+        parts = call.data.split("_")
+        record_id = int(parts[2])
+        page = int(parts[3])
+
+        await db.delete_expense_by_id(record_id, call.message.chat.id)
+
+        await bot.answer_callback_query(call.id, text="Запис успішно видалено!")
+        await send_history_page(call.message.chat.id, page, call.message.message_id)
 
     await bot.answer_callback_query(call.id)
 
