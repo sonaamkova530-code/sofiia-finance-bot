@@ -5,7 +5,7 @@ def get_exchange_rate(currency_code="EUR"):
     url = "https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=5"
 
     try:
-        response = requests.get(url, timeout=10)  # Додаємо таймаут 10 секунд
+        response = requests.get(url, timeout=10)
         if response.status_code != 200:
             print(f"ПриватБанк відповів помилкою: {response.status_code}")
             return None

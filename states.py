@@ -11,3 +11,6 @@ class IncomeState(StatesGroup):
 class SettingsState(StatesGroup):
     daily_limit = State()
     monthly_limit = State()
+
+class EditState(StatesGroup):
+    new_amount = State()

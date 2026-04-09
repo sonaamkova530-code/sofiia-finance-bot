@@ -158,6 +158,10 @@ class Database:
         query = "DELETE FROM expenses WHERE id = ? AND user_id = ?"
         await self._execute(query, (record_id, user_id))
 
+    async def update_expense_amount(self, record_id, user_id, new_amount):
+        query = "UPDATE expenses SET amount = ? WHERE id = ? AND user_id = ?"
+        await self._execute(query, (new_amount, record_id, user_id))
+
 
 
 
