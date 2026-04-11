@@ -1,5 +1,5 @@
 from telebot import types
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 
 def get_incomes_categories_menu():
@@ -17,9 +17,11 @@ def get_main_menu():
     return markup
 
 
-def get_categories_menu():
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    markup.add("Кава", "Обід", "Транспорт", "Шопінг")
+def get_dynamic_categories_keyboard(categories_list):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    buttons = [KeyboardButton(name) for name in categories_list]
+    markup.add(*buttons)
+    markup.row(KeyboardButton("Скасувати"))
     return markup
 
 
@@ -62,4 +64,14 @@ def get_delete_confirmation_menu():
     btn_yes = InlineKeyboardButton("Так, видалити", callback_data="confirm_delete")
     btn_no = InlineKeyboardButton("Ні, залишити", callback_data="cancel_confirm")
     markup.add(btn_yes, btn_no)
+    return markup
+
+
+def get_categories_management_keyboard(categories):
+    markup = InlineKeyboardMarkup()
+    for cat_id, cat_name in categories:
+        btn_edit = InlineKeyboardButton(f"Редагувати {cat_name}", callback_data=f"editcat_{cat_id}")
+        btn_del = InlineKeyboardButton(f"Видалити {cat_name}", callback_data=f"delcat_{cat_id}")
+        markup.row(btn_edit, btn_del)
+
     return markup

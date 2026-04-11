@@ -38,7 +38,7 @@ class Config:
 
 state_storage = StateMemoryStorage()
 bot = AsyncTeleBot(Config.TOKEN, state_storage=state_storage)
-bot.setup_middleware(AntispamMiddleware(limit=1.5))
+bot.setup_middleware(AntispamMiddleware(limit=1.0))
 bot.add_custom_filter(asyncio_filters.StateFilter(bot))
 db = Database(Config.DB_NAME)
 scheduler = AsyncIOScheduler()
@@ -162,7 +162,8 @@ async def get_amount(message):
     search_term = text_parts[1] if len(text_parts) > 1 else ""
     suggested = await db.suggest_category(message.chat.id, search_term) if search_term else None
 
-    markup = keyboards.get_categories_menu()
+    user_categories = await db.get_user_categories(message.chat.id)
+    markup = keyboards.get_dynamic_categories_keyboard(user_categories)
     display_text = "Обери категорію:"
     if suggested:
         display_text = f"Я думаю це **{suggested}**. Правильно? Чи обери іншу:"
@@ -190,6 +191,38 @@ async def save_all_data(message):
     if total_spent > Config.MONTHLY_LIMIT:
         text += f"\n\n*ГЛОБАЛЬНИЙ ЛІМІТ!*\nЗагальна сума: {total_spent} грн.\nПора зупинитися!"
     await BotService.send_report(bot, user_id, text)
+
+
+@bot.message_handler(commands=['new_category'])
+@log_action
+@error_handler
+async def ask_new_category(message):
+    await bot.set_state(message.from_user.id, SettingsState.new_category_name, message.chat.id)
+    await bot.send_message(message.chat.id, "Напиши назву нової категорії (наприклад: 'Спорт', 'Одяг'):")
+
+
+@bot.message_handler(state=SettingsState.new_category_name)
+async def proces_new_category(message):
+    new_name = message.text.strip()
+    await db.add_category(message.chat.id, new_name)
+    await bot.delete_state(message.from_user.id, message.chat.id)
+    markup = keyboards.get_main_menu()
+    await bot.send_message(message.chat.id, f"Категорію: *{new_name}* успішно додано!", reply_markup=markup,
+                           parse_mode="Markdown")
+
+
+@bot.message_handler(commands=['manage_categories'])
+@log_action
+@error_handler
+async def open_categories_manager(message):
+    categories = await db.get_custom_categories(message.chat.id)
+    if not categories:
+        await bot.send_message(message.chat.id, "У тебе ще немає власних категорій. Додай їх командою /new_category")
+        return
+
+    markup = keyboards.get_categories_management_keyboard(categories)
+    await bot.send_message(message.chat.id, "*Керування категоріями:*\nОбери, що хочеш зробити:", reply_markup=markup,
+                           parse_mode="Markdown")
 
 
 @bot.message_handler(func=lambda message: message.text == "Мої витрати")
@@ -386,7 +419,6 @@ async def show_rate(message):
 @error_handler
 @log_action
 async def process_edit_amount(message):
-    print("Зловили текст для редагування")
     amount, error_msg = Validator.parse_amount(message.text)
 
     if error_msg:
@@ -401,6 +433,19 @@ async def process_edit_amount(message):
     await bot.delete_state(message.from_user.id, message.chat.id)
     await bot.send_message(message.chat.id, "Суму оновлено!")
     await send_history_page(message.chat.id, page)
+
+
+@bot.message_handler(state=SettingsState.edit_category_name)
+async def proces_edit_category_name(message):
+    new_name = message.text.strip()
+
+    async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        cat_id = data['edit_cat_id']
+    await db.rename_category(cat_id, message.chat.id, new_name)
+    await bot.delete_state(message.from_user.id, message.chat.id)
+    markup = keyboards.get_main_menu()
+    await bot.send_message(message.chat.id, f"Категорію успішно перейменовано на *{new_name}*!", reply_markup=markup,
+                           parse_mode="Markdown")
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -451,19 +496,40 @@ async def handle_all_callbacks(call):
         await send_history_page(call.message.chat.id, page, call.message.message_id)
 
     elif call.data.startswith("edit_exp_"):
-        print("Зайшли в редагування")
         parts = call.data.split("_")
         record_id = int(parts[2])
         page = int(parts[3])
 
-        await bot.set_state(call.from_user.id, EditState.new_amount, call.message.chat.id)
-        print(f"Cтан для встановлення запису {record_id}")
+        await bot.set_state(call.from_user.id, SettingsState.edit_category_name, call.message.chat.id)
         async with bot.retrieve_data(call.from_user.id, call.message.chat.id) as data:
             data['edit_id'] = record_id
             data['edit_page'] = page
 
         await bot.answer_callback_query(call.id)
         await bot.send_message(call.message.chat.id, "Введіть нову суму для цього запису:")
+
+    elif call.data.startswith("delcat_"):
+        cat_id = int(call.data.split("_")[1])
+        await db.delete_category(cat_id, call.message.chat.id)
+
+        await bot.answer_callback_query(call.id, "Категорію видалено!")
+
+        categories = await db.get_custom_categories(call.message.chat.id)
+        if categories:
+            markup = keyboards.get_categories_management_keyboard(categories)
+            await bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=markup)
+        else:
+            await bot.edit_message_text("Всі кастомні категорії видалено.", call.message.chat.id,
+                                        call.message.message_id)
+
+
+    elif call.data.startswith("editcat_"):
+        cat_id = int(call.data.split("_")[1])
+        await bot.set_state(call.from_user.id, SettingsState.edit_category_name, call.message.chat.id)
+        async with bot.retrieve_data(call.from_user.id, call.message.chat.id) as data:
+            data['edit_cat_id'] = cat_id
+        await bot.answer_callback_query(call.id)
+        await bot.send_message(call.message.chat.id, "Напиши нову назву для цієї категорії:")
 
     await bot.answer_callback_query(call.id)
 

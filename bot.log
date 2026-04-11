@@ -51034,3 +51034,82 @@ requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetErro
 2026-04-09 18:19:09,216 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
 2026-04-09 18:19:09,217 - INFO - Added job "send_weekly_report" to job store "default"
 2026-04-09 18:19:09,217 - INFO - Scheduler started
+2026-04-09 20:17:20,552 - ERROR - Unknown error: TimeoutError
+2026-04-09 20:17:21,476 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001FA319C7070> files=None request_timeout=300
+2026-04-09 20:17:21,777 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 20:17:21,778 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001FA319C6F20> files=None request_timeout=300
+2026-04-09 20:17:22,284 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 20:17:22,284 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001FA319C66D0> files=None request_timeout=300
+2026-04-09 20:17:23,358 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 20:17:23,358 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001FA319C6E40> files=None request_timeout=300
+2026-04-09 21:51:35,290 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-09 21:51:35,292 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-09 21:51:35,292 - INFO - Scheduler started
+2026-04-09 21:54:52,704 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-09 21:54:52,705 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-09 21:54:52,705 - INFO - Scheduler started
+2026-04-09 22:11:45,529 - ERROR - Unknown error: TimeoutError
+2026-04-09 22:11:45,530 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE55657F0> files=None request_timeout=300
+2026-04-09 23:10:14,358 - ERROR - Aiohttp ClientError: ClientOSError
+2026-04-09 23:10:14,453 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE5566900> files=None request_timeout=300
+2026-04-09 23:10:15,033 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:10:15,034 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE5566970> files=None request_timeout=300
+2026-04-09 23:10:15,585 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:10:15,585 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE5566430> files=None request_timeout=300
+2026-04-09 23:10:16,623 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:10:16,624 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE55669E0> files=None request_timeout=300
+2026-04-09 23:10:18,630 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:10:18,630 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE5566AC0> files=None request_timeout=300
+2026-04-09 23:10:22,640 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:10:22,640 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE55666D0> files=None request_timeout=300
+2026-04-09 23:10:30,655 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:10:30,656 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE56F4520> files=None request_timeout=300
+2026-04-09 23:10:46,678 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:10:46,678 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE56F4750> files=None request_timeout=300
+2026-04-09 23:11:18,683 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-09 23:11:18,683 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE56F4980> files=None request_timeout=300
+2026-04-10 04:12:18,533 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-10 04:12:18,533 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE56F4C20> files=None request_timeout=300
+2026-04-11 14:45:35,691 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-11 14:45:35,692 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000023DE56F4DE0> files=None request_timeout=300
+2026-04-11 15:49:21,611 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 15:49:21,612 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 15:49:21,612 - INFO - Scheduler started
+2026-04-11 15:52:16,359 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 15:52:16,360 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 15:52:16,360 - INFO - Scheduler started
+2026-04-11 17:13:48,349 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 17:13:48,350 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 17:13:48,350 - INFO - Scheduler started
+2026-04-11 17:17:06,554 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 17:17:06,554 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 17:17:06,555 - INFO - Scheduler started
+2026-04-11 18:05:31,494 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 18:05:31,494 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 18:05:31,495 - INFO - Scheduler started
+2026-04-11 18:10:20,041 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 18:10:20,043 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 18:10:20,043 - INFO - Scheduler started
+2026-04-11 18:13:37,455 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 18:13:37,457 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 18:13:37,457 - INFO - Scheduler started
+2026-04-11 18:14:10,846 - ERROR - Incorrect number of bindings supplied. The current statement uses 1, and there are 2 supplied.
+2026-04-11 18:16:55,986 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 18:16:55,991 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 18:16:55,991 - INFO - Scheduler started
+2026-04-11 18:17:06,670 - ERROR - Incorrect number of bindings supplied. The current statement uses 1, and there are 2 supplied.
+2026-04-11 19:00:41,578 - ERROR - Unknown error: TimeoutError
+2026-04-11 19:00:42,587 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A87956E740> files=None request_timeout=300
+2026-04-11 19:00:42,909 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-11 19:00:42,909 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A87956E740> files=None request_timeout=300
+2026-04-11 19:00:43,770 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-11 19:00:43,771 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A879416D60> files=None request_timeout=300
+2026-04-11 19:00:44,798 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-11 19:00:44,798 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000001A879417150> files=None request_timeout=300
+2026-04-11 19:23:03,476 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 19:23:03,477 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 19:23:03,478 - INFO - Scheduler started
+2026-04-11 19:23:16,011 - ERROR - Incorrect number of bindings supplied. The current statement uses 1, and there are 2 supplied.
+2026-04-11 19:46:05,167 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 19:46:05,168 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 19:46:05,168 - INFO - Scheduler started
