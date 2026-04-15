@@ -51113,3 +51113,18 @@ requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetErro
 2026-04-11 19:46:05,167 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
 2026-04-11 19:46:05,168 - INFO - Added job "send_weekly_report" to job store "default"
 2026-04-11 19:46:05,168 - INFO - Scheduler started
+2026-04-11 19:48:02,131 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-11 19:48:02,132 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-11 19:48:02,132 - INFO - Scheduler started
+2026-04-12 00:03:56,595 - ERROR - Unknown error: TimeoutError
+2026-04-12 00:03:57,511 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326DFAC80> files=None request_timeout=300
+2026-04-12 00:03:57,978 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-12 00:03:57,978 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326DF9CC0> files=None request_timeout=300
+2026-04-12 00:03:58,492 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-12 00:03:58,492 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326DFB070> files=None request_timeout=300
+2026-04-12 00:03:59,500 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-12 00:03:59,500 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326DFADD0> files=None request_timeout=300
+2026-04-12 00:04:01,506 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-12 00:04:01,506 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326DFAF90> files=None request_timeout=300
+2026-04-12 00:04:05,515 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-04-12 00:04:05,516 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326F8C8A0> files=None request_timeout=300
