@@ -415,6 +415,72 @@ async def show_rate(message):
         await bot.send_message(message.chat.id, "Не вдалося отримати курс. Спробуй пізніше.", parse_mode="Markdown")
 
 
+@bot.message_handler(commands=['settings'])
+async def show_settings(message):
+    user_id = message.chat.id
+    settings = await db.get_user_settings(user_id)
+
+    daily = settings["daily"]
+    monthly = settings["monthly"]
+
+    text = (
+        f"*Налаштування бюджету*\n\n"
+        f"Твій денний ліміт: *{daily}*\n"
+        f"Твій місячний ліміт: *{monthly}*\n"
+        "Що саме хочеш змінити?"
+    )
+
+    markup = types.InlineKeyboardMarkup()
+    btn_daily = types.InlineKeyboardButton("Змінити денний ліміт", callback_data="set_daily")
+    btn_monthly = types.InlineKeyboardButton("Змінити місячний ліміт", callback_data="set_monthly")
+    markup.add(btn_daily, btn_monthly)
+
+    await bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
+
+
+@bot.message_handler(commands=['about'])
+async def show_about(message):
+    await bot.send_message(message.chat.id, "Я бекенд проект")
+
+
+@bot.message_handler(commands=['status'])
+@error_handler
+async def system_status(message):
+    if message.chat.id != 5096558702:
+        await bot.send_message(message.chat.id, "У вас немає доступу до цієї команди")
+        return
+    db_count = await db.get_db_status()
+    py_version = platform.python_version()
+    os_info = platform.system()
+    status_text = (
+        f"*System Health Check:*\n\n"
+        f"*Бот:* Online\n"
+        f"*База даних:* Connected\n"
+        f"*Записів у БД:* `{db_count}`\n"
+        f"*Python:* `{py_version}`\n"
+        f"*ОС:* `{os_info}`\n"
+        f"*Час сервера:* `{datetime.now().strftime('%H:%M:%S')}`"
+    )
+    await bot.send_message(message.chat.id, status_text, parse_mode="Markdown")
+
+
+@bot.message_handler(commands=['dashboard'])
+@error_handler
+@log_action
+async def send_magic_link(message):
+    user_id = message.chat.id
+    new_token = secrets.token_urlsafe(16)
+    await db.save_token(user_id, new_token)
+    magic_link = f"http://127.0.0.1:8001/dashboard/{user_id}?token={new_token}"
+    text = (
+        f"*Сейф відкрито*\n\n"
+        f"Ось твоє персональне посилання на дашборд. "
+        f"Воно дійсне, поки ти не згенеруєш нове.\n\n"
+        f"[Перейти до Дашборду]({magic_link})"
+    )
+    await bot.send_message(message.chat.id, text, parse_mode="Markdown", disable_web_page_preview=True)
+
+
 @bot.message_handler(state=EditState.new_amount)
 @error_handler
 @log_action
@@ -558,72 +624,6 @@ async def process_monthly_limit_step(message):
         await bot.send_message(message.chat.id, "Помилка! Введіть число. Спробуйте ще раз /settings")
     finally:
         await bot.delete_message(message.from_user.id, message.chat.id)
-
-
-@bot.message_handler(commands=['settings'])
-async def show_settings(message):
-    user_id = message.chat.id
-    settings = await db.get_user_settings(user_id)
-
-    daily = settings["daily"]
-    monthly = settings["monthly"]
-
-    text = (
-        f"*Налаштування бюджету*\n\n"
-        f"Твій денний ліміт: *{daily}*\n"
-        f"Твій місячний ліміт: *{monthly}*\n"
-        "Що саме хочеш змінити?"
-    )
-
-    markup = types.InlineKeyboardMarkup()
-    btn_daily = types.InlineKeyboardButton("Змінити денний ліміт", callback_data="set_daily")
-    btn_monthly = types.InlineKeyboardButton("Змінити місячний ліміт", callback_data="set_monthly")
-    markup.add(btn_daily, btn_monthly)
-
-    await bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
-
-
-@bot.message_handler(commands=['about'])
-async def show_about(message):
-    await bot.send_message(message.chat.id, "Я бекенд проект")
-
-
-@bot.message_handler(commands=['status'])
-@error_handler
-async def system_status(message):
-    if message.chat.id != 5096558702:
-        await bot.send_message(message.chat.id, "У вас немає доступу до цієї команди")
-        return
-    db_count = await db.get_db_status()
-    py_version = platform.python_version()
-    os_info = platform.system()
-    status_text = (
-        f"*System Health Check:*\n\n"
-        f"*Бот:* Online\n"
-        f"*База даних:* Connected\n"
-        f"*Записів у БД:* `{db_count}`\n"
-        f"*Python:* `{py_version}`\n"
-        f"*ОС:* `{os_info}`\n"
-        f"*Час сервера:* `{datetime.now().strftime('%H:%M:%S')}`"
-    )
-    await bot.send_message(message.chat.id, status_text, parse_mode="Markdown")
-
-
-@bot.message_handler(commands=['dashboard'])
-@error_handler
-@log_action
-async def send_magic_link(message):
-    user_id = message.chat.id
-    new_token = secrets.token_urlsafe(16)
-    await db.save_token(user_id, new_token)
-    magic_link = f"http://127.0.0.1:8001/dashboard/{user_id}?token={new_token}"
-    text = (
-        f"*Сейф відкрито*\n\n"
-        f"Ось твоє персональне посилання на дашборд. "
-        f"Воно дійсне, поки ти не згенеруєш нове.\n\n"
-        f"[Перейти до Дашборду]({magic_link})"
-    )
-    await bot.send_message(message.chat.id, text, parse_mode="Markdown", disable_web_page_preview=True)
 
 
 def signal_handler(_signal, _frame):

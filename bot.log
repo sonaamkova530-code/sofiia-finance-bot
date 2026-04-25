@@ -51128,3 +51128,18 @@ requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetErro
 2026-04-12 00:04:01,506 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326DFAF90> files=None request_timeout=300
 2026-04-12 00:04:05,515 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
 2026-04-12 00:04:05,516 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002A326F8C8A0> files=None request_timeout=300
+2026-04-15 16:02:43,037 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-15 16:02:43,038 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-15 16:02:43,039 - INFO - Scheduler started
+2026-04-25 16:28:06,845 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-25 16:28:06,846 - INFO - Added job "send_weekly_report" to job store "default"
+2026-04-25 16:28:06,846 - INFO - Scheduler started
+2026-04-25 16:34:53,766 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:35:00,876 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:35:12,855 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:35:17,772 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:35:35,486 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:35:38,149 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:36:01,613 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:36:09,791 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
+2026-04-25 16:36:24,434 - ERROR - A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message to delete not found
