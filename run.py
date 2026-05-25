@@ -9,6 +9,7 @@ async def run_api():
     server = uvicorn.Server(config)
     await server.serve()
 
+
 async def start_everything():
     print("Запускаємо Бот та API")
     await asyncio.gather(
@@ -22,11 +23,3 @@ if __name__ == "__main__":
         asyncio.run(start_everything())
     except KeyboardInterrupt:
         print("\nПроцеси зупинено користувачем.")
-
-
-
-
-
-
-
-
