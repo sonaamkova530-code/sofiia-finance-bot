@@ -173,6 +173,12 @@ async def get_amount(message):
 
 @bot.message_handler(state=ExpenseState.category)
 async def save_all_data(message):
+    if message.text == "Скасувати":
+        await bot.delete_state(message.from_user.id, message.chat.id)
+        await bot.send_message(message.chat.id, "Дію скасовано!")
+        await start_command(message)
+        return
+
     async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         amount = data.get("amount")
     category = message.text
@@ -180,7 +186,6 @@ async def save_all_data(message):
     current_date = datetime.now().strftime("%Y-%m-%d")
 
     await db.add_expense(user_id, amount, category, current_date)
-    await bot.delete_state(message.from_user.id, message.chat.id)
     today_total = await db.get_today_spending(user_id, current_date)
     total_spent = await db.get_total_spending(user_id)
 
@@ -637,7 +642,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 async def main():
     await db.init_db()
-    scheduler.add_job(send_weekly_report, 'cron', day_of_week='mon', hour=9, minute=0)
+    scheduler.add_job(send_weekly_report, 'cron', day_of_week='thu', hour=1, minute=44)
     scheduler.start()
     print("Асинхронний бот запущений!")
     await bot.infinity_polling()

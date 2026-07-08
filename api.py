@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     redis = aioredis.from_url("redis://127.0.0.1:6379", encoding="utf-8")
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     print("Redis успішно підключено через lifespan!")
