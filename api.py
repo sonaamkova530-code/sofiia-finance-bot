@@ -66,7 +66,7 @@ async def get_dashboard(request: Request, user_id: int, token: str = None):
         raise HTTPException(status_code=403, detail="Доступ заборонено! Згенеруй нове посилання через бота.")
 
     raw_data = await db.get_user_expenses(user_id)
-    total_sum = sum([row[0] for row in raw_data])
+    total_sum = sum([row[0] or 0.0 for row in raw_data])
     cat_stats = await db.get_expenses_by_category(user_id)
     labels = [row[0] for row in cat_stats]
     values = [row[1] for row in cat_stats]

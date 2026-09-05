@@ -186,6 +186,7 @@ async def save_all_data(message):
     current_date = datetime.now().strftime("%Y-%m-%d")
 
     await db.add_expense(user_id, amount, category, current_date)
+    await bot.delete_state(message.from_user.id, message.chat.id)
     today_total = await db.get_today_spending(user_id, current_date)
     total_spent = await db.get_total_spending(user_id)
 
@@ -328,7 +329,7 @@ async def save_income(message):
         amount = data.get("amount")
     user_id = message.chat.id
     category = message.text
-    current_date = datetime.now().strftime("%Y/%m/%d")
+    current_date = datetime.now().strftime("%Y-%m-%d")
 
     await db.add_income(user_id, amount, category, current_date)
     await bot.delete_state(message.from_user.id, message.chat.id)
@@ -523,12 +524,13 @@ async def proces_edit_category_name(message):
 @log_action
 async def handle_all_callbacks(call):
     user_id = call.message.chat.id
+
     if call.data == "refresh_balance":
         await bot.answer_callback_query(call.id, text="Оновлюю данні...")
         await total_balance(call.message)
+        return
 
     elif call.data == "confirm_delete":
-
         success = await db.delete_expense(call.message.chat.id)
         if success:
             new_text = "Видалено останній запис!"
@@ -542,49 +544,39 @@ async def handle_all_callbacks(call):
                                     text="Видалення скасовано.")
 
     elif call.data == "set_daily":
-        await bot.answer_callback_query(call.id)
         await bot.send_message(user_id, "Введіть новий *денний* ліміт (цифрами):", parse_mode="Markdown")
         await bot.set_state(user_id, SettingsState.daily_limit, user_id)
 
     elif call.data == "set_monthly":
-        await bot.answer_callback_query(call.id)
         await bot.send_message(user_id, "Введіть новий *місячний* ліміт (цифрами):", parse_mode="Markdown")
         await bot.set_state(user_id, SettingsState.monthly_limit, user_id)
 
     elif call.data.startswith("page_"):
         page = int(call.data.split("_")[1])
         await send_history_page(call.message.chat.id, page, call.message.message_id)
-        await bot.answer_callback_query(call.id)
 
     elif call.data.startswith("del_exp_"):
         parts = call.data.split("_")
         record_id = int(parts[2])
         page = int(parts[3])
-
         await db.delete_expense_by_id(record_id, call.message.chat.id)
-
         await bot.answer_callback_query(call.id, text="Запис успішно видалено!")
         await send_history_page(call.message.chat.id, page, call.message.message_id)
+        return
 
     elif call.data.startswith("edit_exp_"):
         parts = call.data.split("_")
         record_id = int(parts[2])
         page = int(parts[3])
-
         await bot.set_state(call.from_user.id, SettingsState.edit_category_name, call.message.chat.id)
         async with bot.retrieve_data(call.from_user.id, call.message.chat.id) as data:
             data['edit_id'] = record_id
             data['edit_page'] = page
-
-        await bot.answer_callback_query(call.id)
         await bot.send_message(call.message.chat.id, "Введіть нову суму для цього запису:")
 
     elif call.data.startswith("delcat_"):
         cat_id = int(call.data.split("_")[1])
         await db.delete_category(cat_id, call.message.chat.id)
-
-        await bot.answer_callback_query(call.id, "Категорію видалено!")
-
         categories = await db.get_custom_categories(call.message.chat.id)
         if categories:
             markup = keyboards.get_categories_management_keyboard(categories)
@@ -599,7 +591,6 @@ async def handle_all_callbacks(call):
         await bot.set_state(call.from_user.id, SettingsState.edit_category_name, call.message.chat.id)
         async with bot.retrieve_data(call.from_user.id, call.message.chat.id) as data:
             data['edit_cat_id'] = cat_id
-        await bot.answer_callback_query(call.id)
         await bot.send_message(call.message.chat.id, "Напиши нову назву для цієї категорії:")
 
     await bot.answer_callback_query(call.id)
@@ -615,7 +606,7 @@ async def process_daily_limit_step(message):
     except ValueError:
         await bot.send_message(message.chat.id, "Помилка! Введіть число (наприклад, 600). Спробуйте ще раз /settings")
     finally:
-        await bot.delete_message(message.from_user.id, message.chat.id)
+        await bot.delete_message(message.chat.id, message.message_id)
 
 
 @bot.message_handler(state=SettingsState.monthly_limit)
@@ -628,11 +619,14 @@ async def process_monthly_limit_step(message):
     except ValueError:
         await bot.send_message(message.chat.id, "Помилка! Введіть число. Спробуйте ще раз /settings")
     finally:
-        await bot.delete_message(message.from_user.id, message.chat.id)
+        await bot.delete_message(message.chat.id, message.message_id)
 
 
 def signal_handler(_signal, _frame):
-    bot.send_message(5096558702, "Бот вимикається для оновлення або технічних робіт. Скоро повернуся!")
+    loop = asyncio.get_event_loop()
+    if loop.is_running():
+        loop.create_task(
+            bot.send_message(5096558702, "Бот вимикається для оновлення або технічних робіт. Скоро повернуся!"))
     scheduler.shutdown()
     os._exit(0)
 

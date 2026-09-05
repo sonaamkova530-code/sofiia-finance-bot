@@ -62059,3 +62059,148 @@ telebot.asyncio_helper.RequestTimeout: Request timeout. Request: method=get url=
 2026-07-09 02:26:46,144 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
 2026-07-09 02:26:46,145 - INFO - Added job "send_weekly_report" to job store "default"
 2026-07-09 02:26:46,145 - INFO - Scheduler started
+2026-07-09 02:30:10,444 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-07-09 02:30:10,445 - INFO - Added job "send_weekly_report" to job store "default"
+2026-07-09 02:30:10,445 - INFO - Scheduler started
+2026-07-09 07:38:44,563 - ERROR - Unknown error: TimeoutError
+2026-07-09 07:38:44,563 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32DD0> files=None request_timeout=300
+2026-07-09 07:38:56,002 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-09 07:38:56,002 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32F20> files=None request_timeout=300
+2026-07-09 07:38:56,512 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-09 07:38:56,512 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32EB0> files=None request_timeout=300
+2026-07-09 07:38:57,525 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-09 07:38:57,526 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32F90> files=None request_timeout=300
+2026-07-09 07:38:59,533 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-09 07:38:59,533 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A33000> files=None request_timeout=300
+2026-07-10 09:24:19,526 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:24:19,526 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAC4B0> files=None request_timeout=300
+2026-07-10 09:24:27,540 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:24:27,540 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAC520> files=None request_timeout=300
+2026-07-10 09:24:43,546 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:24:43,546 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A33000> files=None request_timeout=300
+2026-07-10 09:25:15,562 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:25:15,562 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32EB0> files=None request_timeout=300
+2026-07-10 09:26:15,577 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:26:15,578 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32C10> files=None request_timeout=300
+2026-07-10 09:27:15,594 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:27:15,594 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32200> files=None request_timeout=300
+2026-07-10 09:28:15,619 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:28:15,619 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32D60> files=None request_timeout=300
+2026-07-10 09:29:15,626 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:29:15,626 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAC440> files=None request_timeout=300
+2026-07-10 09:30:15,659 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:30:15,660 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BACA60> files=None request_timeout=300
+2026-07-10 09:31:15,705 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:31:15,705 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951A32AC0> files=None request_timeout=300
+2026-07-10 09:32:15,749 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:32:15,750 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BACF30> files=None request_timeout=300
+2026-07-10 09:33:15,789 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:33:15,789 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BACFA0> files=None request_timeout=300
+2026-07-10 09:34:15,817 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:34:15,817 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAD320> files=None request_timeout=300
+2026-07-10 09:35:15,863 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:35:15,863 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAD550> files=None request_timeout=300
+2026-07-10 09:36:15,876 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:36:15,876 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAD780> files=None request_timeout=300
+2026-07-10 09:37:15,895 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:37:15,895 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAD9B0> files=None request_timeout=300
+2026-07-10 09:38:15,901 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:38:15,902 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BADBE0> files=None request_timeout=300
+2026-07-10 09:39:15,945 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:39:15,946 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BADE80> files=None request_timeout=300
+2026-07-10 09:40:15,974 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:40:15,975 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAE0B0> files=None request_timeout=300
+2026-07-10 09:41:16,008 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:41:16,008 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAE350> files=None request_timeout=300
+2026-07-10 09:42:16,018 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:42:16,019 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAE580> files=None request_timeout=300
+2026-07-10 09:43:16,031 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:43:16,031 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAE120> files=None request_timeout=300
+2026-07-10 09:44:16,044 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:44:16,044 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAE9E0> files=None request_timeout=300
+2026-07-10 09:45:16,051 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-07-10 09:45:16,051 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAEC10> files=None request_timeout=300
+2026-07-10 10:08:22,396 - ERROR - Aiohttp ClientError: ClientOSError
+2026-07-10 10:08:22,396 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAEE40> files=None request_timeout=300
+2026-07-10 10:09:22,417 - ERROR - Aiohttp ClientError: ClientOSError
+2026-07-10 10:09:22,418 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x0000017951BAF1C0> files=None request_timeout=300
+2026-08-09 16:20:21,361 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 16:20:21,362 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 16:20:21,362 - INFO - Scheduler started
+2026-08-09 16:55:11,020 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 16:55:11,022 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 16:55:11,022 - INFO - Scheduler started
+2026-08-09 17:20:18,547 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:20:18,549 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:20:18,549 - INFO - Scheduler started
+2026-08-09 17:21:00,637 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:21:00,638 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:21:00,638 - INFO - Scheduler started
+2026-08-09 17:21:15,616 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:21:15,616 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:21:15,616 - INFO - Scheduler started
+2026-08-09 17:28:34,858 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:28:34,859 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:28:34,859 - INFO - Scheduler started
+2026-08-09 17:30:55,666 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:30:55,666 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:30:55,666 - INFO - Scheduler started
+2026-08-09 17:40:44,208 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:40:44,209 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:40:44,209 - INFO - Scheduler started
+2026-08-09 17:40:50,189 - ERROR - 'facecolor' or 'color' argument must be a valid color or sequence of colors.
+2026-08-09 17:41:00,508 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:41:00,509 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:41:00,509 - INFO - Scheduler started
+2026-08-09 17:41:12,803 - ERROR - 'facecolor' or 'color' argument must be a valid color or sequence of colors.
+2026-08-09 17:42:26,903 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:42:26,903 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:42:26,903 - INFO - Scheduler started
+2026-08-09 17:42:39,524 - ERROR - 'facecolor' or 'color' argument must be a valid color or sequence of colors.
+2026-08-09 17:44:03,996 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:44:03,997 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:44:03,997 - INFO - Scheduler started
+2026-08-09 17:52:29,996 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-08-09 17:52:29,997 - INFO - Added job "send_weekly_report" to job store "default"
+2026-08-09 17:52:29,997 - INFO - Scheduler started
+2026-08-09 22:53:09,610 - ERROR - Unknown error: TimeoutError
+2026-08-09 22:53:09,610 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE818640> files=None request_timeout=300
+2026-08-09 22:53:10,779 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-09 22:53:10,779 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE7D29F0> files=None request_timeout=300
+2026-08-11 12:37:13,505 - ERROR - Unknown error: TimeoutError
+2026-08-11 12:37:13,506 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE81C7C0> files=None request_timeout=300
+2026-08-11 12:37:14,539 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 12:37:14,539 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE81CC00> files=None request_timeout=300
+2026-08-11 12:37:16,645 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 12:37:16,645 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE793E50> files=None request_timeout=300
+2026-08-11 12:37:20,660 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 12:37:20,660 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE95C650> files=None request_timeout=300
+2026-08-11 12:37:28,677 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 12:37:28,677 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE924B90> files=None request_timeout=300
+2026-08-11 12:37:44,686 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 12:37:44,686 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE9248C0> files=None request_timeout=300
+2026-08-11 18:03:08,520 - ERROR - Unknown error: TimeoutError
+2026-08-11 18:03:08,616 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE958D70> files=None request_timeout=300
+2026-08-11 18:03:09,117 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:03:09,117 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE959390> files=None request_timeout=300
+2026-08-11 18:03:09,987 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:03:09,987 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE959240> files=None request_timeout=300
+2026-08-11 18:03:11,071 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:03:11,071 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE959080> files=None request_timeout=300
+2026-08-11 18:03:13,127 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:03:13,127 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE9594E0> files=None request_timeout=300
+2026-08-11 18:03:17,141 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:03:17,142 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE959860> files=None request_timeout=300
+2026-08-11 18:03:25,153 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:03:25,153 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE959B00> files=None request_timeout=300
+2026-08-11 18:03:41,172 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:03:41,172 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE959CC0> files=None request_timeout=300
+2026-08-11 18:04:13,187 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:04:13,187 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE959E80> files=None request_timeout=300
+2026-08-11 18:05:13,208 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:05:13,208 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE95A0B0> files=None request_timeout=300
+2026-08-11 18:06:13,217 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:06:13,218 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE95A120> files=None request_timeout=300
+2026-08-11 18:07:13,284 - ERROR - Aiohttp ClientError: ClientConnectorDNSError
+2026-08-11 18:07:13,285 - ERROR - Unhandled exception (full traceback for debug level): Request timeout. Request: method=get url=getUpdates params=<aiohttp.formdata.FormData object at 0x000002F8BE95A510> files=None request_timeout=300
+                                                                                

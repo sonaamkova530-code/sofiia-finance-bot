@@ -80,7 +80,7 @@ class Database:
         return result
 
     async def get_total_spending(self, user_id):
-        query = "SELECT SUM(amount) FROM expenses WHERE user_id = ?"
+        query = "SELECT SUM(amount) FROM expenses WHERE user_id = ? AND date >= DATE('now', '-30 days')"
         result = await self._execute(query, (user_id,))
         return result[0][0] if result[0][0] is not None else 0
 
