@@ -1,5 +1,5 @@
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def create_balance_chart(income, spending, user_id):
@@ -27,7 +27,7 @@ def create_stats_chart(stats, user_id):
     categories = [row[0] for row in sorted_stats]
     amounts = [row[1] for row in sorted_stats]
 
-    fig, ax = plt.subplots(figsize=(8, len(categories) * 0.5 + 2))
+    _fig, ax = plt.subplots(figsize=(8, len(categories) * 0.5 + 2))
     bars = ax.barh(categories, amounts, color='#4A4A4A', edgecolor='#E76F51', height=0.65)
     ax.set_title("Розподіл витрат за категоріями", fontsize=12, fontweight="bold", pad=15)
     ax.set_xlabel("Сума (грн)", fontsize=10)

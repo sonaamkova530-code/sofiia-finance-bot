@@ -6,11 +6,10 @@ class Database:
         self.db_file = db_file
 
     async def _execute(self, query, params=()):
-        async with aiosqlite.connect(self.db_file) as db:
-            async with db.execute(query, params) as cursor:
-                results = await cursor.fetchall()
-                await db.commit()
-                return results
+        async with aiosqlite.connect(self.db_file) as db, db.execute(query, params) as cursor:
+            results = await cursor.fetchall()
+            await db.commit()
+            return results
 
     async def init_db(self):
         async with aiosqlite.connect(self.db_file) as db:
@@ -95,11 +94,11 @@ class Database:
         return await self._execute(query, (user_id, time_modifier))
 
     async def get_today_expenses(self, user_id):
-        query = f"SELECT amount, category, date FROM expenses WHERE user_id = ? AND date = date('now')"
+        query = "SELECT amount, category, date FROM expenses WHERE user_id = ? AND date = date('now')"
         return await self._execute(query, (user_id,))
 
     async def get_expenses_by_category(self, user_id):
-        query = f"SELECT category, SUM(amount) FROM expenses WHERE user_id = ? GROUP BY category ORDER BY SUM(amount) DESC"
+        query = "SELECT category, SUM(amount) FROM expenses WHERE user_id = ? GROUP BY category ORDER BY SUM(amount) DESC"
         return await self._execute(query, (user_id,))
 
     async def get_all_expenses_for_export(self, user_id):

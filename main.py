@@ -1,25 +1,28 @@
+import asyncio
+import functools
+import logging
+import math
+import os
+import platform
+import secrets
+import signal
+from datetime import datetime, timezone
+
+import aiofiles
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from dotenv import load_dotenv
+from telebot import asyncio_filters, types
+from telebot.apihelper import ApiTelegramException
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_storage import StateMemoryStorage
-from states import ExpenseState, IncomeState, SettingsState, EditState
-from middlewares import AntispamMiddleware
-from telebot import types
-from telebot import asyncio_filters
-import keyboards
-import secrets
-import functools
+
 import currency
-import platform
-import os
-import math
-import signal
-from dotenv import load_dotenv
-import asyncio
+import keyboards
 import reports
-from database import Database
-from datetime import datetime
-import logging
 from bot_service import BotService
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from database import Database
+from middlewares import AntispamMiddleware
+from states import EditState, ExpenseState, IncomeState, SettingsState
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,7 +33,7 @@ load_dotenv()
 
 class Config:
     TOKEN = os.getenv("TOKEN")
-    DAILY_LIMIT = float(os.getenv("DAILY_LIMIT", 500))
+    DAILY_LIMIT = float(os.getenv("DAILY_LIMIT", "500"))
     MONTHLY_LIMIT = 5000
     DB_NAME = "my_budget.db"
     PRIMARY_CURRENCY = os.getenv("CURRENCY_PRIMARY", "EUR")
@@ -107,18 +110,18 @@ def error_handler(func):
     async def wrapper(*args, **kwargs):
         try:
             return await func(*args, **kwargs)
-        except Exception as e:
+        except ApiTelegramException as e:
             error_msg = (f"*Критична помилка:*\n\n"
                          f"📌 *Функція:* `{func.__name__}`\n"
                          f"⚠️ *Тип:* `{type(e).__name__}`\n"
                          f"📝 *Текст:* `{e}`\n\n"
-                         f"🕒 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+                         f"🕒 {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}"
                          )
             print(f"[ERROR] {error_msg}")
 
         try:
             await bot.send_message(5096558702, error_msg, parse_mode="Markdown")
-        except Exception as bot_error:
+        except ApiTelegramException as bot_error:
             print(f"Навіть повідомлення про помилку не відправилось: {bot_error}")
             return None
 
@@ -183,7 +186,7 @@ async def save_all_data(message):
         amount = data.get("amount")
     category = message.text
     user_id = message.chat.id
-    current_date = datetime.now().strftime("%Y-%m-%d")
+    current_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     await db.add_expense(user_id, amount, category, current_date)
     await bot.delete_state(message.from_user.id, message.chat.id)
@@ -294,8 +297,9 @@ async def export_to_excel(message):
     data = await db.get_all_expenses_for_export(message.chat.id)
     file_path = reports.create_excel_report(data, message.chat.id)
     if file_path:
-        with open(file_path, 'rb') as file:
-            await bot.send_document(message.chat.id, file, caption="Твій повний звіт у Excel")
+        async with aiofiles.open(file_path, 'rb') as file:
+            file_data = await file.read()
+            await bot.send_document(message.chat.id, file_data, caption="Твій повний звіт у Excel")
 
         os.remove(file_path)
     else:
@@ -329,7 +333,7 @@ async def save_income(message):
         amount = data.get("amount")
     user_id = message.chat.id
     category = message.text
-    current_date = datetime.now().strftime("%Y-%m-%d")
+    current_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     await db.add_income(user_id, amount, category, current_date)
     await bot.delete_state(message.from_user.id, message.chat.id)
@@ -362,9 +366,10 @@ async def total_balance(message):
               f"*Залишок: {balance_uah} грн*{eur_text}")
 
     inline_markup = keyboards.get_balance_inline()
-    with open(chart_path, 'rb') as photo:
-        await bot.send_photo(message.chat.id, photo, caption=report, parse_mode="Markdown", reply_markup=inline_markup)
-    import os
+    async with aiofiles.open(chart_path, 'rb') as photo:
+        file_data = await photo.read()
+        await bot.send_photo(message.chat.id, file_data, caption=report, parse_mode="Markdown",
+                             reply_markup=inline_markup)
     os.remove(chart_path)
 
 
@@ -392,7 +397,7 @@ async def send_history_page(chat_id, page, message_id=None):
 
     text = f"*Історія витрат (Сторінка {page} з {total_pages})*\n\n"
     for index, record in enumerate(records, start=1):
-        record_id, amount, category, date = record
+        _record_id, amount, category, date = record
         text += f"{index}.* {date}: *{amount}* грн* - {category}\n"
 
     markup = keyboards.get_history_keyboard(page, total_pages, records)
@@ -465,7 +470,7 @@ async def system_status(message):
         f"*Записів у БД:* `{db_count}`\n"
         f"*Python:* `{py_version}`\n"
         f"*ОС:* `{os_info}`\n"
-        f"*Час сервера:* `{datetime.now().strftime('%H:%M:%S')}`"
+        f"*Час сервера:* `{datetime.now(timezone.utc).strftime('%H:%M:%S')}`"
     )
     await bot.send_message(message.chat.id, status_text, parse_mode="Markdown")
 

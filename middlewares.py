@@ -1,5 +1,7 @@
 import time
-from  telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
+
+from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
+
 
 class AntispamMiddleware(BaseMiddleware):
     def __init__(self, limit=1.0):

@@ -1,7 +1,9 @@
 import asyncio
+
 import uvicorn
-from main import main as run_bot_logic
+
 from api import app as fastapi_app
+from main import main as run_bot_logic
 
 
 async def run_api():

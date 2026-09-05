@@ -1,4 +1,4 @@
-from telebot.asyncio_handler_backends import StatesGroup, State
+from telebot.asyncio_handler_backends import State, StatesGroup
 
 
 class ExpenseState(StatesGroup):

@@ -1,12 +1,14 @@
-from fastapi import FastAPI, Request, HTTPException
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
-from database import Database
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
-from contextlib import asynccontextmanager
+from redis import asyncio as aioredis
+
+from database import Database
 
 
 @asynccontextmanager
@@ -60,7 +62,7 @@ async def get_analytics(request: Request, user_id: int):
 
 
 @app.get("/dashboard/{user_id}", response_class=HTMLResponse)
-async def get_dashboard(request: Request, user_id: int, token: str = None):
+async def get_dashboard(request: Request, user_id: int, token: str | None = None):
     valid_token = await db.get_token(user_id)
     if not token or token != valid_token:
         raise HTTPException(status_code=403, detail="Доступ заборонено! Згенеруй нове посилання через бота.")

@@ -1,4 +1,5 @@
 import requests
+from telebot.apihelper import ApiTelegramException
 
 
 def get_exchange_rate(currency_code="EUR"):
@@ -17,6 +18,6 @@ def get_exchange_rate(currency_code="EUR"):
                 return round(float(item['buy']), 2)
 
         return None
-    except Exception as e:
+    except ApiTelegramException as e:
         print(f"Помилка ПриватБанку: {e}")
         return None
